@@ -1,0 +1,5437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CrowRules Yearbook — Digital School Yearbooks</title>
+
+<meta
+  name="description"
+  content="CrowRules Yearbook creates digital yearbooks for elementary schools, middle schools, high schools, colleges and universities."
+>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap"
+  rel="stylesheet"
+>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+/* =========================================================
+   CROWRULES YEARBOOK v1.3
+   DIGITAL-ONLY SCHOOL YEARBOOK
+   ========================================================= */
+
+:root {
+  --bg: #05070b;
+  --bg2: #080c12;
+  --panel: #0d121a;
+  --panel2: #131a24;
+  --panel3: #18212d;
+
+  --border: #263141;
+  --border2: #354257;
+
+  --text: #f4f7fb;
+  --text2: #cbd3de;
+  --muted: #8f9bad;
+
+  --success: #71dfa1;
+  --warning: #e2c76d;
+  --danger: #ef7777;
+
+  --radius: 16px;
+  --nav-height: 76px;
+
+  --shadow:
+    0 20px 70px rgba(0,0,0,.34);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-height) + 20px);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+
+  color: var(--text);
+
+  background:
+    radial-gradient(
+      circle at 5% -10%,
+      rgba(87,105,132,.25),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(75,91,116,.18),
+      transparent 32%
+    ),
+    var(--bg);
+
+  font-family:
+    Montserrat,
+    Arial,
+    sans-serif;
+}
+
+body.menu-open {
+  overflow: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+}
+
+.container {
+  width:
+    min(
+      1240px,
+      calc(100% - 40px)
+    );
+
+  margin: auto;
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  z-index: 10000;
+
+  height: var(--nav-height);
+
+  background:
+    rgba(5,7,11,.95);
+
+  border-bottom:
+    1px solid var(--border);
+
+  backdrop-filter:
+    blur(18px);
+
+  -webkit-backdrop-filter:
+    blur(18px);
+
+  box-shadow:
+    0 8px 35px rgba(0,0,0,.25);
+}
+
+.nav {
+  height: var(--nav-height);
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap: 18px;
+}
+
+.logo {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  text-decoration:
+    none;
+
+  flex-shrink: 0;
+}
+
+.logo-main {
+  font-family:
+    Orbitron,
+    sans-serif;
+
+  font-size:
+    17px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    1px;
+}
+
+.logo-sub {
+  color:
+    var(--muted);
+
+  font-size:
+    8px;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    2px;
+
+  text-transform:
+    uppercase;
+}
+
+.nav-links {
+  margin-left:
+    auto;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    3px;
+
+  overflow-x:
+    auto;
+
+  scrollbar-width:
+    none;
+}
+
+.nav-links::-webkit-scrollbar {
+  display:
+    none;
+}
+
+.nav-links a {
+  padding:
+    9px 10px;
+
+  border-radius:
+    9px;
+
+  color:
+    var(--muted);
+
+  text-decoration:
+    none;
+
+  font-size:
+    11px;
+
+  font-weight:
+    800;
+
+  white-space:
+    nowrap;
+
+  transition:
+    .2s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color:
+    #fff;
+
+  background:
+    var(--panel2);
+}
+
+.member-status {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    7px;
+
+  padding:
+    7px 11px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    999px;
+
+  color:
+    var(--muted);
+
+  font-size:
+    10px;
+
+  font-weight:
+    700;
+
+  white-space:
+    nowrap;
+}
+
+.member-dot {
+  width:
+    7px;
+
+  height:
+    7px;
+
+  border-radius:
+    50%;
+
+  background:
+    var(--muted);
+}
+
+.member-dot.online {
+  background:
+    var(--success);
+
+  box-shadow:
+    0 0 12px rgba(113,223,161,.55);
+}
+
+.mobile-menu-button {
+  display:
+    none;
+
+  margin-left:
+    auto;
+
+  width:
+    42px;
+
+  height:
+    42px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    10px;
+
+  background:
+    var(--panel);
+
+  color:
+    #fff;
+
+  cursor:
+    pointer;
+}
+
+.mobile-menu {
+  display:
+    none;
+
+  position:
+    fixed;
+
+  top:
+    var(--nav-height);
+
+  left:
+    0;
+
+  right:
+    0;
+
+  bottom:
+    0;
+
+  z-index:
+    9999;
+
+  padding:
+    20px;
+
+  background:
+    rgba(5,7,11,.99);
+
+  overflow-y:
+    auto;
+}
+
+.mobile-menu.open {
+  display:
+    block;
+}
+
+.mobile-menu a {
+  display:
+    block;
+
+  padding:
+    16px;
+
+  margin-bottom:
+    8px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    12px;
+
+  background:
+    var(--panel);
+
+  color:
+    var(--text2);
+
+  text-decoration:
+    none;
+
+  font-weight:
+    700;
+}
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+main {
+  padding-top:
+    var(--nav-height);
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero {
+  min-height:
+    720px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  padding:
+    90px 0;
+
+  position:
+    relative;
+
+  overflow:
+    hidden;
+}
+
+.hero::before {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  width:
+    650px;
+
+  height:
+    650px;
+
+  right:
+    -250px;
+
+  top:
+    -200px;
+
+  border:
+    1px solid rgba(255,255,255,.045);
+
+  border-radius:
+    50%;
+}
+
+.hero-content {
+  position:
+    relative;
+
+  z-index:
+    1;
+
+  max-width:
+    930px;
+}
+
+.eyebrow {
+  color:
+    var(--muted);
+
+  font-size:
+    11px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    3px;
+
+  text-transform:
+    uppercase;
+}
+
+.hero h1 {
+  margin:
+    15px 0 22px;
+
+  font-family:
+    Orbitron,
+    sans-serif;
+
+  font-size:
+    clamp(
+      43px,
+      8vw,
+      86px
+    );
+
+  line-height:
+    .96;
+
+  letter-spacing:
+    -2px;
+}
+
+.hero h1 span {
+  color:
+    #aeb9c9;
+}
+
+.hero p {
+  max-width:
+    820px;
+
+  color:
+    var(--text2);
+
+  font-size:
+    18px;
+
+  line-height:
+    1.8;
+}
+
+.hero-note {
+  max-width:
+    820px;
+
+  margin-top:
+    18px;
+
+  color:
+    var(--muted);
+
+  font-size:
+    13px;
+
+  line-height:
+    1.75;
+}
+
+.actions {
+  display:
+    flex;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    10px;
+
+  margin-top:
+    28px;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.btn {
+  min-height:
+    44px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  padding:
+    11px 17px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    10px;
+
+  background:
+    var(--panel2);
+
+  color:
+    #fff;
+
+  text-decoration:
+    none;
+
+  cursor:
+    pointer;
+
+  font-size:
+    12px;
+
+  font-weight:
+    800;
+
+  transition:
+    .2s ease;
+}
+
+.btn:hover {
+  transform:
+    translateY(-2px);
+
+  border-color:
+    var(--border2);
+}
+
+.btn-primary {
+  color:
+    #06080c;
+
+  background:
+    #f0f3f7;
+
+  border-color:
+    #f0f3f7;
+}
+
+.btn-danger {
+  color:
+    #fff;
+
+  background:
+    rgba(239,119,119,.08);
+
+  border-color:
+    rgba(239,119,119,.35);
+}
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+section {
+  padding:
+    78px 0;
+
+  border-top:
+    1px solid rgba(255,255,255,.045);
+}
+
+.section-heading {
+  margin-bottom:
+    30px;
+}
+
+.section-heading h2 {
+  margin:
+    8px 0 10px;
+
+  font-family:
+    Orbitron,
+    sans-serif;
+
+  font-size:
+    clamp(
+      28px,
+      4vw,
+      44px
+    );
+
+  line-height:
+    1.1;
+}
+
+.section-heading p {
+  max-width:
+    850px;
+
+  color:
+    var(--muted);
+
+  line-height:
+    1.75;
+}
+
+/* =========================================================
+   GRIDS
+   ========================================================= */
+
+.grid {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:
+    18px;
+}
+
+.grid-4 {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(4,1fr);
+
+  gap:
+    18px;
+}
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.card {
+  padding:
+    22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(19,26,36,.98),
+      rgba(8,11,17,.98)
+    );
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    var(--radius);
+
+  box-shadow:
+    var(--shadow);
+}
+
+.card h3 {
+  margin:
+    10px 0 8px;
+
+  font-size:
+    18px;
+}
+
+.card p {
+  color:
+    var(--muted);
+
+  line-height:
+    1.7;
+
+  font-size:
+    13px;
+}
+
+.tag {
+  display:
+    inline-flex;
+
+  padding:
+    6px 9px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    999px;
+
+  color:
+    var(--muted);
+
+  font-size:
+    9px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    1px;
+
+  text-transform:
+    uppercase;
+}
+
+/* =========================================================
+   SCHOOL TYPES
+   ========================================================= */
+
+.school-card {
+  min-height:
+    260px;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  justify-content:
+    space-between;
+
+  transition:
+    .2s ease;
+}
+
+.school-card:hover {
+  transform:
+    translateY(-4px);
+
+  border-color:
+    var(--border2);
+}
+
+.school-icon {
+  font-size:
+    38px;
+
+  margin-bottom:
+    14px;
+}
+
+/* =========================================================
+   DIGITAL-ONLY MESSAGE
+   ========================================================= */
+
+.digital-banner {
+  padding:
+    22px;
+
+  margin-bottom:
+    20px;
+
+  border:
+    1px solid var(--border2);
+
+  border-radius:
+    var(--radius);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.045),
+      rgba(255,255,255,.012)
+    );
+}
+
+.digital-banner strong {
+  display:
+    block;
+
+  margin-bottom:
+    7px;
+
+  font-family:
+    Orbitron,
+    sans-serif;
+}
+
+.digital-banner span {
+  color:
+    var(--muted);
+
+  font-size:
+    13px;
+
+  line-height:
+    1.7;
+}
+
+/* =========================================================
+   VISION
+   ========================================================= */
+
+.comparison {
+  display:
+    grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:
+    18px;
+}
+
+.comparison .card {
+  min-height:
+    270px;
+}
+
+.feature-list {
+  margin:
+    20px 0 0;
+
+  padding:
+    0;
+
+  list-style:
+    none;
+}
+
+.feature-list li {
+  padding:
+    10px 0;
+
+  border-top:
+    1px solid rgba(255,255,255,.05);
+
+  color:
+    var(--text2);
+
+  font-size:
+    13px;
+}
+
+.feature-list li::before {
+  content:
+    "✓";
+
+  margin-right:
+    9px;
+
+  color:
+    var(--success);
+
+  font-weight:
+    900;
+}
+
+/* =========================================================
+   DIGITAL FEATURES
+   ========================================================= */
+
+.feature-card {
+  min-height:
+    210px;
+}
+
+/* =========================================================
+   YEARBOOK ARCHIVE
+   ========================================================= */
+
+.yearbook-card {
+  padding:
+    0;
+
+  overflow:
+    hidden;
+}
+
+.yearbook-cover {
+  width:
+    100%;
+
+  height:
+    230px;
+
+  display:
+    block;
+
+  object-fit:
+    cover;
+
+  background:
+    linear-gradient(
+      145deg,
+      #2a3547,
+      #090d14
+    );
+}
+
+.yearbook-body {
+  padding:
+    20px;
+}
+
+.yearbook-meta {
+  margin-top:
+    7px;
+
+  color:
+    var(--muted);
+
+  font-size:
+    11px;
+}
+
+.yearbook-link {
+  margin-top:
+    15px;
+}
+
+/* =========================================================
+   DIGITAL VIEWER
+   ========================================================= */
+
+.viewer-overlay {
+  display:
+    none;
+
+  position:
+    fixed;
+
+  inset:
+    0;
+
+  z-index:
+    20000;
+
+  padding:
+    25px;
+
+  background:
+    rgba(0,0,0,.88);
+
+  backdrop-filter:
+    blur(10px);
+}
+
+.viewer-overlay.open {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+}
+
+.viewer {
+  width:
+    min(
+      1100px,
+      100%
+    );
+
+  height:
+    min(
+      90vh,
+      850px
+    );
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  overflow:
+    hidden;
+
+  background:
+    var(--panel);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    18px;
+
+  box-shadow:
+    0 30px 100px rgba(0,0,0,.65);
+}
+
+.viewer-header {
+  min-height:
+    62px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    15px;
+
+  padding:
+    12px 16px;
+
+  border-bottom:
+    1px solid var(--border);
+}
+
+.viewer-title {
+  font-family:
+    Orbitron,
+    sans-serif;
+
+  font-size:
+    14px;
+
+  font-weight:
+    800;
+}
+
+.viewer-close {
+  width:
+    38px;
+
+  height:
+    38px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    9px;
+
+  background:
+    var(--panel2);
+
+  color:
+    #fff;
+
+  cursor:
+    pointer;
+}
+
+.viewer-content {
+  flex:
+    1;
+
+  overflow:
+    auto;
+
+  padding:
+    25px;
+}
+
+.viewer-page {
+  max-width:
+    850px;
+
+  margin:
+    0 auto 24px;
+
+  padding:
+    30px;
+
+  background:
+    #f3f5f8;
+
+  color:
+    #111;
+
+  border-radius:
+    5px;
+}
+
+.viewer-page img {
+  width:
+    100%;
+
+  margin-bottom:
+    15px;
+}
+
+/* =========================================================
+   MEMBERS
+   ========================================================= */
+
+.member-card {
+  display:
+    flex;
+
+  gap:
+    15px;
+
+  align-items:
+    flex-start;
+}
+
+.avatar {
+  width:
+    70px;
+
+  height:
+    70px;
+
+  flex:
+    0 0 70px;
+
+  object-fit:
+    cover;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    50%;
+
+  background:
+    var(--panel3);
+}
+
+.member-badge {
+  margin-top:
+    8px;
+
+  color:
+    var(--success);
+
+  font-size:
+    10px;
+
+  font-weight:
+    900;
+}
+
+/* =========================================================
+   REVIEWS
+   ========================================================= */
+
+.review-card {
+  min-height:
+    190px;
+}
+
+.review-stars {
+  margin-bottom:
+    10px;
+
+  letter-spacing:
+    2px;
+}
+
+.review-text {
+  color:
+    #dce2ea;
+
+  line-height:
+    1.75;
+}
+
+/* =========================================================
+   FORMS
+   ========================================================= */
+
+.form-card {
+  max-width:
+    1100px;
+}
+
+.form-grid {
+  display:
+    grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:
+    15px;
+}
+
+.field {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    7px;
+}
+
+.field.full {
+  grid-column:
+    1 / -1;
+}
+
+label {
+  color:
+    var(--muted);
+
+  font-size:
+    11px;
+
+  font-weight:
+    900;
+}
+
+input,
+select,
+textarea {
+  width:
+    100%;
+
+  padding:
+    12px 13px;
+
+  outline:
+    none;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    10px;
+
+  background:
+    #070a0f;
+
+  color:
+    #fff;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color:
+    var(--border2);
+}
+
+textarea {
+  min-height:
+    150px;
+
+  resize:
+    vertical;
+}
+
+.form-status {
+  min-height:
+    20px;
+
+  margin-top:
+    13px;
+
+  font-size:
+    13px;
+}
+
+.form-status.success {
+  color:
+    var(--success);
+}
+
+.form-status.error {
+  color:
+    var(--danger);
+}
+
+.login-notice {
+  margin-bottom:
+    18px;
+
+  padding:
+    15px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    10px;
+
+  color:
+    var(--muted);
+
+  background:
+    rgba(255,255,255,.018);
+
+  font-size:
+    13px;
+
+  line-height:
+    1.7;
+}
+
+/* =========================================================
+   CONNECTIONS
+   ========================================================= */
+
+.connection-card {
+  display:
+    block;
+
+  text-decoration:
+    none;
+
+  transition:
+    .2s ease;
+}
+
+.connection-card:hover {
+  transform:
+    translateY(-4px);
+
+  border-color:
+    var(--border2);
+}
+
+/* =========================================================
+   LOADING / EMPTY
+   ========================================================= */
+
+.loading,
+.empty {
+  grid-column:
+    1 / -1;
+
+  padding:
+    35px;
+
+  text-align:
+    center;
+
+  color:
+    var(--muted);
+
+  border:
+    1px dashed var(--border);
+
+  border-radius:
+    var(--radius);
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+  padding:
+    50px 0;
+
+  border-top:
+    1px solid var(--border);
+
+  color:
+    var(--muted);
+
+  font-size:
+    12px;
+}
+
+.footer-grid {
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  gap:
+    20px;
+
+  flex-wrap:
+    wrap;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width:1100px) {
+
+  .nav-links {
+    display:
+      none;
+  }
+
+  .mobile-menu-button {
+    display:
+      block;
+  }
+
+  .grid-4 {
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+}
+
+@media (max-width:900px) {
+
+  .grid {
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+  .comparison {
+    grid-template-columns:
+      1fr;
+  }
+
+}
+
+@media (max-width:650px) {
+
+  .container {
+    width:
+      calc(100% - 28px);
+  }
+
+  .grid,
+  .grid-4,
+  .form-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .field.full {
+    grid-column:
+      auto;
+  }
+
+  .hero {
+    min-height:
+      auto;
+
+    padding:
+      75px 0;
+  }
+
+  .hero p {
+    font-size:
+      16px;
+  }
+
+  .member-status {
+    display:
+      none;
+  }
+
+  .viewer-overlay {
+    padding:
+      8px;
+  }
+
+  .viewer {
+    height:
+      95vh;
+  }
+
+  .viewer-content {
+    padding:
+      12px;
+  }
+
+  .viewer-page {
+    padding:
+      18px;
+  }
+
+}
+
+@media (prefers-reduced-motion:reduce) {
+
+  html {
+    scroll-behavior:
+      auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition:
+      none !important;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     NAV
+========================================================= -->
+
+<header class="site-header">
+
+  <div class="container">
+
+    <nav class="nav">
+
+      <a
+        class="logo"
+        href="#home"
+      >
+
+        <span class="logo-main">
+          CROWRULES YEARBOOK
+        </span>
+
+        <span class="logo-sub">
+          Digital School Memories
+        </span>
+
+      </a>
+
+
+      <div class="nav-links">
+
+        <a
+          href="#home"
+          data-section="home"
+        >
+          Home
+        </a>
+
+        <a
+          href="#schools"
+          data-section="schools"
+        >
+          Schools
+        </a>
+
+        <a
+          href="#vision"
+          data-section="vision"
+        >
+          Vision
+        </a>
+
+        <a
+          href="#features"
+          data-section="features"
+        >
+          Features
+        </a>
+
+        <a
+          href="#yearbooks"
+          data-section="yearbooks"
+        >
+          Yearbooks
+        </a>
+
+        <a
+          href="#members"
+          data-section="members"
+        >
+          Members
+        </a>
+
+        <a
+          href="#reviews"
+          data-section="reviews"
+        >
+          Reviews
+        </a>
+
+        <a
+          href="#request"
+          data-section="request"
+        >
+          Request
+        </a>
+
+      </div>
+
+
+      <div class="member-status">
+
+        <span
+          id="memberDot"
+          class="member-dot"
+        ></span>
+
+        <span id="memberStatusText">
+          Guest
+        </span>
+
+      </div>
+
+
+      <button
+        id="mobileMenuButton"
+        class="mobile-menu-button"
+        type="button"
+        aria-label="Open navigation"
+        aria-expanded="false"
+      >
+        ☰
+      </button>
+
+    </nav>
+
+  </div>
+
+</header>
+
+
+<!-- =========================================================
+     MOBILE NAV
+========================================================= -->
+
+<div
+  id="mobileMenu"
+  class="mobile-menu"
+>
+
+  <a href="#home">
+    Home
+  </a>
+
+  <a href="#schools">
+    Schools
+  </a>
+
+  <a href="#vision">
+    Vision
+  </a>
+
+  <a href="#features">
+    Features
+  </a>
+
+  <a href="#yearbooks">
+    Yearbooks
+  </a>
+
+  <a href="#members">
+    Members
+  </a>
+
+  <a href="#reviews">
+    Reviews
+  </a>
+
+  <a href="#request">
+    Request Information
+  </a>
+
+  <a href="#entertainment">
+    CrowRules Entertainment
+  </a>
+
+</div>
+
+
+<main>
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<section
+  id="home"
+  class="hero"
+>
+
+  <div class="container">
+
+    <div class="hero-content">
+
+      <div class="eyebrow">
+        CrowRules Entertainment • Digital Yearbooks
+      </div>
+
+      <h1>
+        YOUR SCHOOL.
+        <br>
+        <span>YOUR STORY.</span>
+      </h1>
+
+      <p>
+
+        CrowRules Yearbook creates modern digital
+        yearbooks for elementary schools, middle schools,
+        high schools, colleges and universities.
+
+      </p>
+
+      <div class="hero-note">
+
+        A digital yearbook can bring together photographs,
+        stories, students, teachers, activities, athletics,
+        clubs, graduation memories, videos, audio and
+        other moments from the school year.
+
+      </div>
+
+      <div class="actions">
+
+        <a
+          class="btn btn-primary"
+          href="#request"
+        >
+          Request Information
+        </a>
+
+        <a
+          class="btn"
+          href="#yearbooks"
+        >
+          Explore Digital Yearbooks
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     SCHOOLS
+========================================================= -->
+
+<section id="schools">
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div class="eyebrow">
+        Schools We Serve
+      </div>
+
+      <h2>
+        Every Level Of Education
+      </h2>
+
+      <p>
+        CrowRules Yearbook is designed to adapt to
+        the memories and traditions of each school level.
+      </p>
+
+    </div>
+
+
+    <div class="digital-banner">
+
+      <strong>
+        100% DIGITAL YEARBOOKS
+      </strong>
+
+      <span>
+        CrowRules Yearbook is a digital-first service.
+        No physical books are required. Students, families,
+        educators and alumni can access memories online.
+      </span>
+
+    </div>
+
+
+    <div class="grid-4">
+
+
+      <article class="card school-card">
+
+        <div>
+
+          <div class="school-icon">
+            🏫
+          </div>
+
+          <span class="tag">
+            Elementary
+          </span>
+
+          <h3>
+            Elementary Schools
+          </h3>
+
+          <p>
+            Celebrate classroom experiences,
+            teachers, field trips, school events,
+            friendships and growing-up memories.
+          </p>
+
+        </div>
+
+        <a
+          class="btn"
+          href="#request"
+          data-school-type="Elementary School"
+        >
+          Start An Elementary Project
+        </a>
+
+      </article>
+
+
+      <article class="card school-card">
+
+        <div>
+
+          <div class="school-icon">
+            🎒
+          </div>
+
+          <span class="tag">
+            Middle School
+          </span>
+
+          <h3>
+            Middle Schools
+          </h3>
+
+          <p>
+            Capture student life, athletics,
+            clubs, activities, teachers, events
+            and friendships.
+          </p>
+
+        </div>
+
+        <a
+          class="btn"
+          href="#request"
+          data-school-type="Middle School"
+        >
+          Start A Middle School Project
+        </a>
+
+      </article>
+
+
+      <article class="card school-card">
+
+        <div>
+
+          <div class="school-icon">
+            🎓
+          </div>
+
+          <span class="tag">
+            High School
+          </span>
+
+          <h3>
+            High Schools
+          </h3>
+
+          <p>
+            Build digital sections for students,
+            seniors, graduation, sports, clubs,
+            performing arts and staff.
+          </p>
+
+        </div>
+
+        <a
+          class="btn"
+          href="#request"
+          data-school-type="High School"
+        >
+          Start A High School Project
+        </a>
+
+      </article>
+
+
+      <article class="card school-card">
+
+        <div>
+
+          <div class="school-icon">
+            🏛️
+          </div>
+
+          <span class="tag">
+            College
+          </span>
+
+          <h3>
+            Colleges & Universities
+          </h3>
+
+          <p>
+            Preserve campus life, organizations,
+            athletics, faculty, traditions,
+            events and graduating classes.
+          </p>
+
+        </div>
+
+        <a
+          class="btn"
+          href="#request"
+          data-school-type="College / University"
+        >
+          Start A College Project
+        </a>
+
+      </article>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     VISION
+========================================================= -->
+
+<section id="vision">
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div class="eyebrow">
+        Our Vision
+      </div>
+
+      <h2>
+        Why A CrowRules Digital Yearbook?
+      </h2>
+
+      <p>
+        The goal isn't simply to replace a traditional
+        yearbook. The goal is to create a richer digital
+        record of a school community.
+      </p>
+
+    </div>
+
+
+    <div class="comparison">
+
+
+      <article class="card">
+
+        <span class="tag">
+          Classic Yearbook
+        </span>
+
+        <h3>
+          A Snapshot
+        </h3>
+
+        <p>
+          Traditional yearbooks have an important place
+          in school history. They preserve photographs,
+          names, events and memories from a particular year.
+        </p>
+
+        <ul class="feature-list">
+
+          <li>
+            Photographs
+          </li>
+
+          <li>
+            Student names
+          </li>
+
+          <li>
+            Class memories
+          </li>
+
+          <li>
+            School events
+          </li>
+
+        </ul>
+
+      </article>
+
+
+      <article class="card">
+
+        <span class="tag">
+          CrowRules Yearbook
+        </span>
+
+        <h3>
+          A Living Digital Archive
+        </h3>
+
+        <p>
+          CrowRules Yearbook expands the idea into a
+          multimedia digital experience that can connect
+          students, educators, families, alumni and
+          school communities.
+        </p>
+
+        <ul class="feature-list">
+
+          <li>
+            Photos and galleries
+          </li>
+
+          <li>
+            Video memories
+          </li>
+
+          <li>
+            Audio and stories
+          </li>
+
+          <li>
+            Interactive digital pages
+          </li>
+
+          <li>
+            Long-term online archives
+          </li>
+
+        </ul>
+
+      </article>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     FEATURES
+========================================================= -->
+
+<section id="features">
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div class="eyebrow">
+        Digital Features
+      </div>
+
+      <h2>
+        More Than A Collection Of Photos
+      </h2>
+
+      <p>
+        A CrowRules digital yearbook can combine the
+        traditional yearbook experience with multimedia.
+      </p>
+
+    </div>
+
+
+    <div class="grid">
+
+
+      <article class="card feature-card">
+
+        <span class="tag">
+          Photos
+        </span>
+
+        <h3>
+          Photo Galleries
+        </h3>
+
+        <p>
+          Organize classroom, event, sports,
+          club and graduation photography.
+        </p>
+
+      </article>
+
+
+      <article class="card feature-card">
+
+        <span class="tag">
+          Video
+        </span>
+
+        <h3>
+          Video Memories
+        </h3>
+
+        <p>
+          Connect school-year memories with
+          video content and special moments.
+        </p>
+
+      </article>
+
+
+      <article class="card feature-card">
+
+        <span class="tag">
+          Audio
+        </span>
+
+        <h3>
+          Audio Stories
+        </h3>
+
+        <p>
+          Preserve interviews, messages,
+          music and other audio memories.
+        </p>
+
+      </article>
+
+
+      <article class="card feature-card">
+
+        <span class="tag">
+          Students
+        </span>
+
+        <h3>
+          Student Sections
+        </h3>
+
+        <p>
+          Create digital profiles and sections
+          for participating students and members.
+        </p>
+
+      </article>
+
+
+      <article class="card feature-card">
+
+        <span class="tag">
+          Activities
+        </span>
+
+        <h3>
+          Sports & Clubs
+        </h3>
+
+        <p>
+          Showcase athletics, clubs,
+          organizations and extracurricular life.
+        </p>
+
+      </article>
+
+
+      <article class="card feature-card">
+
+        <span class="tag">
+          Graduation
+        </span>
+
+        <h3>
+          Seniors & Graduation
+        </h3>
+
+        <p>
+          Give graduating classes their own
+          digital section and lasting archive.
+        </p>
+
+      </article>
+
+
+      <article class="card feature-card">
+
+        <span class="tag">
+          Faculty
+        </span>
+
+        <h3>
+          Teachers & Staff
+        </h3>
+
+        <p>
+          Recognize the educators and staff
+          who helped shape the school year.
+        </p>
+
+      </article>
+
+
+      <article class="card feature-card">
+
+        <span class="tag">
+          History
+        </span>
+
+        <h3>
+          Digital Archives
+        </h3>
+
+        <p>
+          Preserve published editions as part
+          of a growing school-memory archive.
+        </p>
+
+      </article>
+
+
+      <article class="card feature-card">
+
+        <span class="tag">
+          Community
+        </span>
+
+        <h3>
+          Alumni Memories
+        </h3>
+
+        <p>
+          Digital archives can remain accessible
+          as students become alumni.
+        </p>
+
+      </article>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     YEARBOOK ARCHIVE
+========================================================= -->
+
+<section id="yearbooks">
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div class="eyebrow">
+        Digital Archive
+      </div>
+
+      <h2>
+        Past Yearbooks
+      </h2>
+
+      <p>
+        Published digital editions appear here and
+        can be opened directly as online yearbooks.
+      </p>
+
+    </div>
+
+
+    <div
+      id="yearbookGrid"
+      class="grid"
+    >
+
+      <div class="loading">
+        Loading digital yearbooks...
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     MEMBERS
+========================================================= -->
+
+<section id="members">
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div class="eyebrow">
+        CrowRules Community
+      </div>
+
+      <h2>
+        CrowRules Members
+      </h2>
+
+      <p>
+        CrowRules Yearbook uses the same member identity
+        as CrowRules Entertainment. There is no separate
+        Yearbook account system.
+      </p>
+
+    </div>
+
+
+    <div
+      id="memberGrid"
+      class="grid"
+    >
+
+      <div class="loading">
+        Loading public members...
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     REVIEWS
+========================================================= -->
+
+<section id="reviews">
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div class="eyebrow">
+        Community Reviews
+      </div>
+
+      <h2>
+        What People Think
+      </h2>
+
+      <p>
+        Reviews are moderated through CrowRules Admin Pro
+        before being displayed publicly.
+      </p>
+
+    </div>
+
+
+    <div
+      id="reviewGrid"
+      class="grid"
+    >
+
+      <div class="loading">
+        Loading reviews...
+      </div>
+
+    </div>
+
+
+    <div
+      class="card form-card"
+      style="margin-top:25px"
+    >
+
+      <div class="section-heading">
+
+        <div class="eyebrow">
+          Share Your Experience
+        </div>
+
+        <h3>
+          Leave A Review
+        </h3>
+
+        <p>
+          Your CrowRules member account can be used
+          to submit a review.
+        </p>
+
+      </div>
+
+
+      <div
+        id="reviewLoginNotice"
+        class="login-notice"
+      >
+        Checking your CrowRules membership...
+      </div>
+
+
+      <form
+        id="reviewForm"
+        style="display:none"
+      >
+
+        <div class="form-grid">
+
+
+          <div class="field">
+
+            <label>
+              Your Name
+            </label>
+
+            <input
+              id="reviewerName"
+              name="reviewer_name"
+              required
+              maxlength="150"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Your Role
+            </label>
+
+            <select
+              name="reviewer_role"
+            >
+
+              <option value="">
+                Select
+              </option>
+
+              <option>
+                Student
+              </option>
+
+              <option>
+                Parent / Family
+              </option>
+
+              <option>
+                Teacher
+              </option>
+
+              <option>
+                Faculty
+              </option>
+
+              <option>
+                Staff
+              </option>
+
+              <option>
+                School Administrator
+              </option>
+
+              <option>
+                Yearbook Advisor
+              </option>
+
+              <option>
+                Alumni
+              </option>
+
+              <option>
+                Other
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              School Level
+            </label>
+
+            <select
+              name="school_type"
+              required
+            >
+
+              <option value="">
+                Select
+              </option>
+
+              <option>
+                Elementary School
+              </option>
+
+              <option>
+                Middle School
+              </option>
+
+              <option>
+                High School
+              </option>
+
+              <option>
+                College / University
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Rating
+            </label>
+
+            <select
+              name="rating"
+              required
+            >
+
+              <option value="">
+                Select
+              </option>
+
+              <option value="5">
+                ★★★★★ — Excellent
+              </option>
+
+              <option value="4">
+                ★★★★☆ — Great
+              </option>
+
+              <option value="3">
+                ★★★☆☆ — Good
+              </option>
+
+              <option value="2">
+                ★★☆☆☆ — Fair
+              </option>
+
+              <option value="1">
+                ★☆☆☆☆ — Needs Improvement
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field full">
+
+            <label>
+              Review
+            </label>
+
+            <textarea
+              name="review_text"
+              required
+              minlength="10"
+              maxlength="2000"
+              placeholder="Tell us about your CrowRules Yearbook experience..."
+            ></textarea>
+
+          </div>
+
+
+        </div>
+
+
+        <div class="actions">
+
+          <button
+            class="btn btn-primary"
+            type="submit"
+          >
+            Submit Review
+          </button>
+
+        </div>
+
+
+        <div
+          id="reviewFormStatus"
+          class="form-status"
+        ></div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     REQUEST
+========================================================= -->
+
+<section id="request">
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div class="eyebrow">
+        Start A Digital Yearbook
+      </div>
+
+      <h2>
+        Request Information Or A Quote
+      </h2>
+
+      <p>
+        Tell us about your school and what you would
+        like included in your digital yearbook.
+      </p>
+
+    </div>
+
+
+    <div class="digital-banner">
+
+      <strong>
+        DIGITAL YEARBOOK SERVICE
+      </strong>
+
+      <span>
+        This service is designed specifically for online
+        digital yearbooks. There is no physical-yearbook
+        ordering process.
+      </span>
+
+    </div>
+
+
+    <div class="card form-card">
+
+      <form
+        id="requestForm"
+      >
+
+        <div class="form-grid">
+
+
+          <div class="field">
+
+            <label>
+              Contact Name
+            </label>
+
+            <input
+              name="name"
+              required
+              maxlength="150"
+              autocomplete="name"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Email
+            </label>
+
+            <input
+              name="email"
+              type="email"
+              required
+              maxlength="254"
+              autocomplete="email"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              School Name
+            </label>
+
+            <input
+              name="school_or_group"
+              required
+              maxlength="200"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              School Type
+            </label>
+
+            <select
+              name="service_type"
+              id="schoolType"
+              required
+            >
+
+              <option value="">
+                Select school level
+              </option>
+
+              <option value="Elementary School">
+                Elementary School
+              </option>
+
+              <option value="Middle School">
+                Middle School
+              </option>
+
+              <option value="High School">
+                High School
+              </option>
+
+              <option value="College / University">
+                College / University
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              School / District / Institution
+            </label>
+
+            <input
+              name="organization"
+              maxlength="200"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Yearbook Year
+            </label>
+
+            <input
+              name="yearbook_year"
+              type="number"
+              min="1900"
+              max="2200"
+              id="yearbookYear"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Approximate Number Of People
+            </label>
+
+            <input
+              name="estimated_people"
+              type="number"
+              min="1"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Project Type
+            </label>
+
+            <select
+              name="package_interest"
+            >
+
+              <option value="">
+                Select
+              </option>
+
+              <option value="Full Digital Yearbook">
+                Full Digital Yearbook
+              </option>
+
+              <option value="Digital Archive">
+                Digital Archive
+              </option>
+
+              <option value="Digital Yearbook + Multimedia">
+                Digital Yearbook + Multimedia
+              </option>
+
+              <option value="School History Archive">
+                School History Archive
+              </option>
+
+              <option value="Not Sure">
+                Not Sure — Help Me Decide
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Desired Delivery Date
+            </label>
+
+            <input
+              name="desired_delivery_date"
+              type="date"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Budget Range
+            </label>
+
+            <input
+              name="budget_range"
+              maxlength="100"
+              placeholder="Optional"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Preferred Contact
+            </label>
+
+            <select
+              name="preferred_contact"
+            >
+
+              <option value="email">
+                Email
+              </option>
+
+              <option value="phone">
+                Phone
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Referral Source
+            </label>
+
+            <input
+              name="referral_source"
+              maxlength="200"
+            >
+
+          </div>
+
+
+          <div class="field full">
+
+            <label>
+              What Should The Digital Yearbook Include?
+            </label>
+
+            <textarea
+              name="project_details"
+              required
+              maxlength="5000"
+              placeholder="Tell us about students, classes, teachers, staff, sports, clubs, graduation, photos, videos, audio, traditions, alumni, school history and anything else you'd like included."
+            ></textarea>
+
+          </div>
+
+
+        </div>
+
+
+        <div class="actions">
+
+          <button
+            class="btn btn-primary"
+            type="submit"
+          >
+            Submit Digital Yearbook Request
+          </button>
+
+        </div>
+
+
+        <div
+          id="formStatus"
+          class="form-status"
+        ></div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     ENTERTAINMENT CONNECTION
+========================================================= -->
+
+<section id="entertainment">
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div class="eyebrow">
+        Part Of CrowRules Entertainment
+      </div>
+
+      <h2>
+        The Yearbook Is Part Of The Bigger Story
+      </h2>
+
+      <p>
+        CrowRules Yearbook extends CrowRules Entertainment
+        beyond streaming by preserving the people,
+        communities and memories connected to the brand.
+      </p>
+
+    </div>
+
+
+    <div class="grid">
+
+
+      <a
+        class="card connection-card"
+        href="https://crowrulesentertainment-oss.github.io/crowrulestv/"
+        target="_blank"
+        rel="noopener"
+      >
+
+        <span class="tag">
+          Main Brand
+        </span>
+
+        <h3>
+          CrowRules Entertainment
+        </h3>
+
+        <p>
+          The central home for the CrowRules Entertainment
+          ecosystem and its branches.
+        </p>
+
+      </a>
+
+
+      <a
+        class="card connection-card"
+        href="https://crowrulesentertainment-oss.github.io/crowrulestv/tv"
+        target="_blank"
+        rel="noopener"
+      >
+
+        <span class="tag">
+          Streaming
+        </span>
+
+        <h3>
+          CrowRules TV
+        </h3>
+
+        <p>
+          Streaming shows, originals, creators,
+          events and entertainment.
+        </p>
+
+      </a>
+
+
+      <a
+        class="card connection-card"
+        href="https://crowrulesentertainment-oss.github.io/crowrulestv/yearbook"
+        target="_blank"
+        rel="noopener"
+      >
+
+        <span class="tag">
+          Digital Memories
+        </span>
+
+        <h3>
+          CrowRules Yearbook
+        </h3>
+
+        <p>
+          Digital school yearbooks and long-term
+          online memory archives.
+        </p>
+
+      </a>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+</main>
+
+
+<!-- =========================================================
+     DIGITAL YEARBOOK VIEWER
+========================================================= -->
+
+<div
+  id="viewerOverlay"
+  class="viewer-overlay"
+  aria-hidden="true"
+>
+
+  <div class="viewer">
+
+    <div class="viewer-header">
+
+      <div
+        id="viewerTitle"
+        class="viewer-title"
+      >
+        Digital Yearbook
+      </div>
+
+      <button
+        id="viewerClose"
+        class="viewer-close"
+        type="button"
+        aria-label="Close yearbook"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div
+      id="viewerContent"
+      class="viewer-content"
+    >
+
+      <div class="loading">
+        Loading yearbook...
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer>
+
+  <div class="container">
+
+    <div class="footer-grid">
+
+      <div>
+
+        ©
+        <span id="footerYear"></span>
+        CrowRules Entertainment
+        • CrowRules Yearbook v1.3
+
+      </div>
+
+      <div>
+        Digital Yearbooks • Elementary • Middle • High School • College
+      </div>
+
+    </div>
+
+  </div>
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   CROWRULES YEARBOOK v1.3
+   CURRENT SUPABASE PROJECT
+   ========================================================= */
+
+const SUPABASE_URL =
+  "https://zauxdqyssratvzmomozf.supabase.co";
+
+
+/*
+  IMPORTANT:
+  Put the PUBLIC anon/publishable key here.
+
+  Do NOT use the service_role key in this file.
+*/
+
+const SUPABASE_ANON_KEY =
+  "sb_publishable_-Z6wecSOxwOk6IBut2zLnw_8DfRxnE9";
+
+
+let db =
+  null;
+
+let currentUser =
+  null;
+
+
+/* =========================================================
+   INITIALIZE SUPABASE
+========================================================= */
+
+if (
+  window.supabase &&
+  SUPABASE_ANON_KEY &&
+  SUPABASE_ANON_KEY !==
+    "YOUR_SUPABASE_ANON_KEY"
+) {
+
+  db =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+}
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function escapeHTML(value) {
+
+  return String(
+    value ?? ""
+  ).replace(
+    /[&<>"']/g,
+    character => {
+
+      const map = {
+
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+
+      };
+
+      return map[character];
+
+    }
+  );
+
+}
+
+
+function firstValue(...values) {
+
+  return values.find(
+    value =>
+      value !== null &&
+      value !== undefined &&
+      String(value).trim() !== ""
+  ) || "";
+
+}
+
+
+function setHTML(
+  selector,
+  html
+) {
+
+  const element =
+    document.querySelector(
+      selector
+    );
+
+  if (element) {
+    element.innerHTML =
+      html;
+  }
+
+}
+
+
+function emptyMessage(
+  selector,
+  message
+) {
+
+  setHTML(
+    selector,
+
+    `<div class="empty">
+      ${escapeHTML(message)}
+    </div>`
+  );
+
+}
+
+
+function getCurrentSchoolYear() {
+
+  const now =
+    new Date();
+
+  const year =
+    now.getFullYear();
+
+  const month =
+    now.getMonth();
+
+  if (month >= 7) {
+    return year + 1;
+  }
+
+  return year;
+
+}
+
+
+/* =========================================================
+   MOBILE NAV
+========================================================= */
+
+function setupMobileMenu() {
+
+  const button =
+    document.querySelector(
+      "#mobileMenuButton"
+    );
+
+  const menu =
+    document.querySelector(
+      "#mobileMenu"
+    );
+
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      const open =
+        menu.classList.toggle(
+          "open"
+        );
+
+
+      document.body.classList.toggle(
+        "menu-open",
+        open
+      );
+
+
+      button.textContent =
+        open
+          ? "×"
+          : "☰";
+
+
+      button.setAttribute(
+        "aria-expanded",
+        String(open)
+      );
+
+    }
+  );
+
+
+  menu
+    .querySelectorAll("a")
+    .forEach(
+      link => {
+
+        link.addEventListener(
+          "click",
+          () => {
+
+            menu.classList.remove(
+              "open"
+            );
+
+            document.body.classList.remove(
+              "menu-open"
+            );
+
+            button.textContent =
+              "☰";
+
+            button.setAttribute(
+              "aria-expanded",
+              "false"
+            );
+
+          }
+        );
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   ACTIVE NAV
+========================================================= */
+
+function setupActiveNav() {
+
+  const sections =
+    document.querySelectorAll(
+      "main section[id]"
+    );
+
+  const links =
+    document.querySelectorAll(
+      ".nav-links a[data-section]"
+    );
+
+
+  const observer =
+    new IntersectionObserver(
+      entries => {
+
+        entries.forEach(
+          entry => {
+
+            if (
+              entry.isIntersecting
+            ) {
+
+              links.forEach(
+                link => {
+
+                  link.classList.toggle(
+                    "active",
+                    link.dataset.section ===
+                      entry.target.id
+                  );
+
+                }
+              );
+
+            }
+
+          }
+        );
+
+      },
+      {
+        rootMargin:
+          "-30% 0px -60% 0px"
+      }
+    );
+
+
+  sections.forEach(
+    section =>
+      observer.observe(section)
+  );
+
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+async function loadAuth() {
+
+  if (!db) {
+
+    updateMemberStatus();
+
+    updateReviewForm();
+
+    return;
+
+  }
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await db.auth.getUser();
+
+
+    if (error) {
+
+      currentUser =
+        null;
+
+    } else {
+
+      currentUser =
+        data?.user ||
+        null;
+
+    }
+
+  } catch (error) {
+
+    console.warn(
+      "Authentication check failed:",
+      error
+    );
+
+    currentUser =
+      null;
+
+  }
+
+
+  updateMemberStatus();
+
+  updateReviewForm();
+
+
+  db.auth.onAuthStateChange(
+    (_event, session) => {
+
+      currentUser =
+        session?.user ||
+        null;
+
+      updateMemberStatus();
+
+      updateReviewForm();
+
+    }
+  );
+
+}
+
+
+function updateMemberStatus() {
+
+  const text =
+    document.querySelector(
+      "#memberStatusText"
+    );
+
+  const dot =
+    document.querySelector(
+      "#memberDot"
+    );
+
+
+  if (currentUser) {
+
+    text.textContent =
+      "Member";
+
+    dot.classList.add(
+      "online"
+    );
+
+  } else {
+
+    text.textContent =
+      "Guest";
+
+    dot.classList.remove(
+      "online"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   YEARBOOK ARCHIVE
+   CURRENT TABLE:
+   crowrules_yearbooks
+========================================================= */
+
+async function loadYearbooks() {
+
+  if (!db) {
+
+    emptyMessage(
+      "#yearbookGrid",
+      "Supabase is not configured. Add the public anon/publishable key."
+    );
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from(
+        "crowrules_yearbooks"
+      )
+      .select("*")
+      .eq(
+        "status",
+        "published"
+      )
+      .order(
+        "sort_order",
+        {
+          ascending:
+            true
+        }
+      )
+      .order(
+        "year",
+        {
+          ascending:
+            false
+        }
+      );
+
+
+  if (error) {
+
+    console.error(
+      "Yearbook archive error:",
+      error
+    );
+
+    emptyMessage(
+      "#yearbookGrid",
+      "The digital yearbook archive could not be loaded."
+    );
+
+    return;
+
+  }
+
+
+  if (!data?.length) {
+
+    emptyMessage(
+      "#yearbookGrid",
+      "No published digital yearbooks are available yet."
+    );
+
+    return;
+
+  }
+
+
+  setHTML(
+    "#yearbookGrid",
+
+    data.map(
+      item => {
+
+        const title =
+          firstValue(
+            item.title,
+            "Digital Yearbook"
+          );
+
+
+        const subtitle =
+          firstValue(
+            item.subtitle
+          );
+
+
+        const description =
+          firstValue(
+            item.description,
+            "A CrowRules digital school yearbook."
+          );
+
+
+        const year =
+          item.year ||
+          "";
+
+
+        const cover =
+          firstValue(
+            item.cover_image_url,
+            item.cover_url
+          );
+
+
+        const directUrl =
+          firstValue(
+            item.yearbook_url,
+            item.preview_url
+          );
+
+
+        return `
+
+          <article class="card yearbook-card">
+
+            ${
+              cover
+
+                ? `
+
+                  <img
+                    class="yearbook-cover"
+                    src="${escapeHTML(cover)}"
+                    alt="${escapeHTML(title)}"
+                    loading="lazy"
+                  >
+
+                `
+
+                : `
+
+                  <div class="yearbook-cover"></div>
+
+                `
+            }
+
+
+            <div class="yearbook-body">
+
+              <span class="tag">
+                Digital Yearbook
+              </span>
+
+              <h3>
+                ${escapeHTML(title)}
+              </h3>
+
+
+              ${
+                subtitle
+
+                  ? `
+
+                    <div class="yearbook-meta">
+                      ${escapeHTML(subtitle)}
+                    </div>
+
+                  `
+
+                  : ""
+
+              }
+
+
+              ${
+                year
+
+                  ? `
+
+                    <div class="yearbook-meta">
+                      School Year ${escapeHTML(year)}
+                    </div>
+
+                  `
+
+                  : ""
+
+              }
+
+
+              <p>
+                ${escapeHTML(description)}
+              </p>
+
+
+              <div class="actions yearbook-link">
+
+                ${
+                  directUrl
+
+                    ? `
+
+                      <a
+                        class="btn btn-primary"
+                        href="${escapeHTML(directUrl)}"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        Open Digital Yearbook
+                      </a>
+
+                    `
+
+                    : `
+
+                      <button
+                        class="btn btn-primary"
+                        type="button"
+                        data-view-yearbook="${escapeHTML(item.id)}"
+                      >
+                        Open Digital Yearbook
+                      </button>
+
+                    `
+                }
+
+              </div>
+
+            </div>
+
+          </article>
+
+        `;
+
+      }
+    ).join("")
+
+  );
+
+
+  document
+    .querySelectorAll(
+      "[data-view-yearbook]"
+    )
+    .forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          () =>
+            openYearbookViewer(
+              button.dataset.viewYearbook
+            )
+        );
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   DIGITAL YEARBOOK VIEWER
+========================================================= */
+
+async function openYearbookViewer(
+  yearbookId
+) {
+
+  const overlay =
+    document.querySelector(
+      "#viewerOverlay"
+    );
+
+  const title =
+    document.querySelector(
+      "#viewerTitle"
+    );
+
+  const content =
+    document.querySelector(
+      "#viewerContent"
+    );
+
+
+  overlay.classList.add(
+    "open"
+  );
+
+  overlay.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+
+  content.innerHTML =
+    `<div class="loading">
+      Loading digital yearbook...
+    </div>`;
+
+
+  if (!db) {
+
+    content.innerHTML =
+      `<div class="empty">
+        Supabase is not configured.
+      </div>`;
+
+    return;
+
+  }
+
+
+  const {
+    data: yearbook,
+    error: yearbookError
+  } =
+    await db
+      .from(
+        "crowrules_yearbooks"
+      )
+      .select("*")
+      .eq(
+        "id",
+        yearbookId
+      )
+      .eq(
+        "status",
+        "published"
+      )
+      .maybeSingle();
+
+
+  if (
+    yearbookError ||
+    !yearbook
+  ) {
+
+    content.innerHTML =
+      `<div class="empty">
+        This digital yearbook could not be opened.
+      </div>`;
+
+    return;
+
+  }
+
+
+  title.textContent =
+    firstValue(
+      yearbook.title,
+      "Digital Yearbook"
+    );
+
+
+  const {
+    data: pages,
+    error: pagesError
+  } =
+    await db
+      .from(
+        "crowrules_yearbook_pages"
+      )
+      .select("*")
+      .eq(
+        "yearbook_id",
+        yearbookId
+      )
+      .eq(
+        "is_published",
+        true
+      )
+      .order(
+        "sort_order",
+        {
+          ascending:
+            true
+        }
+      )
+      .order(
+        "page_number",
+        {
+          ascending:
+            true
+        }
+      );
+
+
+  if (pagesError) {
+
+    console.warn(
+      "Yearbook pages:",
+      pagesError
+    );
+
+    content.innerHTML =
+      `<div class="empty">
+        The digital yearbook was found,
+        but its pages could not be loaded.
+      </div>`;
+
+    return;
+
+  }
+
+
+  if (!pages?.length) {
+
+    content.innerHTML =
+      `<div class="empty">
+        This digital yearbook does not have published pages yet.
+      </div>`;
+
+    return;
+
+  }
+
+
+  content.innerHTML =
+    pages.map(
+      page => {
+
+        const gallery =
+          Array.isArray(
+            page.gallery
+          )
+            ? page.gallery
+            : [];
+
+
+        return `
+
+          <article class="viewer-page">
+
+            ${
+              page.image_url
+
+                ? `
+
+                  <img
+                    src="${escapeHTML(page.image_url)}"
+                    alt="${escapeHTML(page.title || "Yearbook page")}"
+                    loading="lazy"
+                  >
+
+                `
+
+                : ""
+
+            }
+
+
+            ${
+              page.title
+
+                ? `
+
+                  <h2>
+                    ${escapeHTML(page.title)}
+                  </h2>
+
+                `
+
+                : ""
+
+            }
+
+
+            ${
+              page.content
+
+                ? `
+
+                  <div>
+                    ${escapeHTML(page.content)}
+                  </div>
+
+                `
+
+                : ""
+
+            }
+
+
+            ${
+              gallery.length
+
+                ? `
+
+                  <div style="
+                    display:grid;
+                    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+                    gap:10px;
+                    margin-top:20px;
+                  ">
+
+                    ${
+                      gallery
+                        .map(
+                          image => {
+
+                            const url =
+                              typeof image ===
+                              "string"
+
+                                ? image
+
+                                : firstValue(
+                                    image?.url,
+                                    image?.image_url
+                                  );
+
+
+                            if (!url) {
+                              return "";
+                            }
+
+
+                            return `
+
+                              <img
+                                src="${escapeHTML(url)}"
+                                alt=""
+                                loading="lazy"
+                                style="
+                                  width:100%;
+                                  height:180px;
+                                  object-fit:cover;
+                                  border-radius:5px;
+                                "
+                              >
+
+                            `;
+
+                          }
+                        )
+                        .join("")
+                    }
+
+                  </div>
+
+                `
+
+                : ""
+
+            }
+
+          </article>
+
+        `;
+
+      }
+    ).join("");
+
+}
+
+
+function closeYearbookViewer() {
+
+  const overlay =
+    document.querySelector(
+      "#viewerOverlay"
+    );
+
+  overlay.classList.remove(
+    "open"
+  );
+
+  overlay.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+}
+
+
+document
+  .querySelector(
+    "#viewerClose"
+  )
+  .addEventListener(
+    "click",
+    closeYearbookViewer
+  );
+
+
+document
+  .querySelector(
+    "#viewerOverlay"
+  )
+  .addEventListener(
+    "click",
+    event => {
+
+      if (
+        event.target.id ===
+        "viewerOverlay"
+      ) {
+
+        closeYearbookViewer();
+
+      }
+
+    }
+  );
+
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.key ===
+      "Escape"
+    ) {
+
+      closeYearbookViewer();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   MEMBERS
+========================================================= */
+
+async function loadMembers() {
+
+  if (!db) {
+
+    emptyMessage(
+      "#memberGrid",
+      "Supabase is not configured."
+    );
+
+    return;
+
+  }
+
+
+  /*
+    crowrules_yearbook_members is used for
+    edition-specific participation.
+
+    member_profiles is used as the shared
+    CrowRules Entertainment member identity.
+  */
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from(
+        "crowrules_yearbook_profiles"
+      )
+      .select("*")
+      .eq(
+        "is_published",
+        true
+      )
+      .order(
+        "sort_order",
+        {
+          ascending:
+            true
+        }
+      )
+      .order(
+        "display_name",
+        {
+          ascending:
+            true
+        }
+      )
+      .limit(
+        24
+      );
+
+
+  if (error) {
+
+    console.warn(
+      "Yearbook member profiles:",
+      error
+    );
+
+    /*
+      Fall back to shared member profiles.
+    */
+
+    await loadSharedMembers();
+
+    return;
+
+  }
+
+
+  if (!data?.length) {
+
+    await loadSharedMembers();
+
+    return;
+
+  }
+
+
+  renderMembers(
+    data
+  );
+
+}
+
+
+async function loadSharedMembers() {
+
+  if (!db) {
+
+    emptyMessage(
+      "#memberGrid",
+      "Supabase is not configured."
+    );
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from(
+        "member_profiles"
+      )
+      .select(
+        "id,display_name,username,bio,avatar_url,membership_tier,is_active"
+      )
+      .eq(
+        "is_active",
+        true
+      )
+      .order(
+        "display_name",
+        {
+          ascending:
+            true
+        }
+      )
+      .limit(
+        24
+      );
+
+
+  if (error) {
+
+    console.warn(
+      "Shared member profiles:",
+      error
+    );
+
+    emptyMessage(
+      "#memberGrid",
+      "Public member profiles are not available yet."
+    );
+
+    return;
+
+  }
+
+
+  if (!data?.length) {
+
+    emptyMessage(
+      "#memberGrid",
+      "No public CrowRules members yet."
+    );
+
+    return;
+
+  }
+
+
+  renderMembers(
+    data
+  );
+
+}
+
+
+function renderMembers(
+  members
+) {
+
+  setHTML(
+    "#memberGrid",
+
+    members.map(
+      member => {
+
+        const name =
+          firstValue(
+            member.display_name,
+            member.username,
+            "CrowRules Member"
+          );
+
+
+        const role =
+          firstValue(
+            member.role,
+            member.membership_tier,
+            "CrowRules Member"
+          );
+
+
+        const bio =
+          firstValue(
+            member.bio,
+            "Member of the CrowRules community."
+          );
+
+
+        const avatar =
+          firstValue(
+            member.avatar_url,
+            member.photo_url
+          );
+
+
+        return `
+
+          <article class="card member-card">
+
+            ${
+              avatar
+
+                ? `
+
+                  <img
+                    class="avatar"
+                    src="${escapeHTML(avatar)}"
+                    alt=""
+                    loading="lazy"
+                  >
+
+                `
+
+                : `
+
+                  <div class="avatar"></div>
+
+                `
+            }
+
+
+            <div>
+
+              <span class="tag">
+                ${escapeHTML(role)}
+              </span>
+
+              <h3>
+                ${escapeHTML(name)}
+              </h3>
+
+              <p>
+                ${escapeHTML(bio)}
+              </p>
+
+            </div>
+
+          </article>
+
+        `;
+
+      }
+    ).join("")
+
+  );
+
+}
+
+
+/* =========================================================
+   REVIEWS
+========================================================= */
+
+async function loadReviews() {
+
+  if (!db) {
+
+    emptyMessage(
+      "#reviewGrid",
+      "Supabase is not configured."
+    );
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from(
+        "crowrules_yearbook_reviews"
+      )
+      .select("*")
+      .eq(
+        "is_published",
+        true
+      )
+      .order(
+        "sort_order",
+        {
+          ascending:
+            true
+        }
+      )
+      .order(
+        "created_at",
+        {
+          ascending:
+            false
+        }
+      )
+      .limit(
+        30
+      );
+
+
+  if (error) {
+
+    console.warn(
+      "Reviews:",
+      error
+    );
+
+    emptyMessage(
+      "#reviewGrid",
+      "Published reviews are not available yet."
+    );
+
+    return;
+
+  }
+
+
+  if (!data?.length) {
+
+    emptyMessage(
+      "#reviewGrid",
+      "No published reviews yet."
+    );
+
+    return;
+
+  }
+
+
+  setHTML(
+    "#reviewGrid",
+
+    data.map(
+      review => {
+
+        const rating =
+          Math.max(
+            1,
+            Math.min(
+              5,
+              Number(
+                review.rating
+              ) || 5
+            )
+          );
+
+
+        return `
+
+          <article class="card review-card">
+
+            <div
+              class="review-stars"
+              aria-label="${rating} out of 5"
+            >
+
+              ${"★".repeat(rating)}
+              ${"☆".repeat(5-rating)}
+
+            </div>
+
+
+            <p class="review-text">
+
+              “${escapeHTML(
+                review.review_text
+              )}”
+
+            </p>
+
+
+            <strong>
+              ${escapeHTML(
+                firstValue(
+                  review.reviewer_name,
+                  "CrowRules Member"
+                )
+              )}
+            </strong>
+
+
+            ${
+              review.reviewer_role
+
+                ? `
+
+                  <div class="yearbook-meta">
+                    ${escapeHTML(
+                      review.reviewer_role
+                    )}
+                  </div>
+
+                `
+
+                : ""
+
+            }
+
+          </article>
+
+        `;
+
+      }
+    ).join("")
+
+  );
+
+}
+
+
+/* =========================================================
+   REVIEW FORM
+========================================================= */
+
+function updateReviewForm() {
+
+  const notice =
+    document.querySelector(
+      "#reviewLoginNotice"
+    );
+
+  const form =
+    document.querySelector(
+      "#reviewForm"
+    );
+
+  const name =
+    document.querySelector(
+      "#reviewerName"
+    );
+
+
+  if (!currentUser) {
+
+    form.style.display =
+      "none";
+
+
+    notice.innerHTML =
+      "You must be signed in with your CrowRules Entertainment member account to submit a review.";
+
+    return;
+
+  }
+
+
+  form.style.display =
+    "block";
+
+
+  notice.innerHTML =
+    "You are signed in as a CrowRules member. Your review will be submitted for Admin Pro moderation.";
+
+
+  if (
+    name &&
+    !name.value
+  ) {
+
+    name.value =
+      firstValue(
+        currentUser.user_metadata?.display_name,
+        currentUser.user_metadata?.full_name,
+        currentUser.email?.split("@")[0],
+        "CrowRules Member"
+      );
+
+  }
+
+}
+
+
+async function submitReview(
+  event
+) {
+
+  event.preventDefault();
+
+
+  const status =
+    document.querySelector(
+      "#reviewFormStatus"
+    );
+
+
+  status.className =
+    "form-status";
+
+  status.textContent =
+    "Submitting review...";
+
+
+  if (!db) {
+
+    status.classList.add(
+      "error"
+    );
+
+    status.textContent =
+      "Supabase is not configured.";
+
+    return;
+
+  }
+
+
+  if (!currentUser) {
+
+    status.classList.add(
+      "error"
+    );
+
+    status.textContent =
+      "Please sign in with your CrowRules member account.";
+
+    return;
+
+  }
+
+
+  const values =
+    Object.fromEntries(
+      new FormData(
+        event.currentTarget
+      ).entries()
+    );
+
+
+  const row = {
+
+    user_id:
+      currentUser.id,
+
+    reviewer_name:
+      values.reviewer_name,
+
+    reviewer_role:
+      values.reviewer_role ||
+      null,
+
+    school_type:
+      values.school_type ||
+      null,
+
+    rating:
+      Number(
+        values.rating
+      ),
+
+    review_text:
+      values.review_text,
+
+    is_featured:
+      false,
+
+    is_published:
+      false,
+
+    sort_order:
+      0
+
+  };
+
+
+
+  const {
+    error
+  } =
+    await db
+      .from(
+        "crowrules_yearbook_reviews"
+      )
+      .insert(
+        row
+      );
+
+
+  if (error) {
+
+    console.error(
+      "Review submission:",
+      error
+    );
+
+    status.classList.add(
+      "error"
+    );
+
+    status.textContent =
+      "The review could not be submitted. Please try again.";
+
+    return;
+
+  }
+
+
+  status.classList.add(
+    "success"
+  );
+
+  status.textContent =
+    "Thank you! Your review was submitted and is waiting for Admin Pro approval.";
+
+
+  event.currentTarget.reset();
+
+  updateReviewForm();
+
+}
+
+
+/* =========================================================
+   SCHOOL QUICK SELECT
+========================================================= */
+
+function setupSchoolButtons() {
+
+  document
+    .querySelectorAll(
+      "[data-school-type]"
+    )
+    .forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const select =
+              document.querySelector(
+                "#schoolType"
+              );
+
+
+            if (select) {
+
+              select.value =
+                button.dataset.schoolType;
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   REQUEST FORM
+   CURRENT TABLE:
+   crowrules_yearbook_requests
+========================================================= */
+
+async function submitRequest(
+  event
+) {
+
+  event.preventDefault();
+
+
+  const status =
+    document.querySelector(
+      "#formStatus"
+    );
+
+
+  status.className =
+    "form-status";
+
+  status.textContent =
+    "Submitting your digital yearbook request...";
+
+
+  if (!db) {
+
+    status.classList.add(
+      "error"
+    );
+
+    status.textContent =
+      "Supabase is not configured.";
+
+    return;
+
+  }
+
+
+  const values =
+    Object.fromEntries(
+      new FormData(
+        event.currentTarget
+      ).entries()
+    );
+
+
+  let user =
+    currentUser;
+
+
+  if (!user) {
+
+    try {
+
+      const {
+        data
+      } =
+        await db.auth.getUser();
+
+      user =
+        data?.user ||
+        null;
+
+    } catch (_) {
+
+      user =
+        null;
+
+    }
+
+  }
+
+
+  /*
+    These columns match the current table:
+    crowrules_yearbook_requests
+  */
+
+  const row = {
+
+    user_id:
+      user?.id ||
+      null,
+
+    request_type:
+      "digital_yearbook",
+
+    name:
+      values.name,
+
+    email:
+      values.email,
+
+    phone:
+      values.phone ||
+      null,
+
+    organization:
+      values.organization ||
+      null,
+
+    school_or_group:
+      values.school_or_group ||
+      null,
+
+    yearbook_year:
+      values.yearbook_year
+        ? Number(
+            values.yearbook_year
+          )
+        : null,
+
+    estimated_people:
+      values.estimated_people
+        ? Number(
+            values.estimated_people
+          )
+        : null,
+
+    package_interest:
+      values.package_interest ||
+      null,
+
+    project_details:
+      values.project_details ||
+      null,
+
+    preferred_contact:
+      values.preferred_contact ||
+      "email",
+
+    status:
+      "new",
+
+    project_name:
+      `${values.school_or_group || "School"} Digital Yearbook`,
+
+    service_type:
+      values.service_type ||
+      null,
+
+    desired_delivery_date:
+      values.desired_delivery_date ||
+      null,
+
+    budget_range:
+      values.budget_range ||
+      null,
+
+    referral_source:
+      values.referral_source ||
+      null,
+
+    metadata: {
+
+      source:
+        "CrowRules Yearbook v1.3",
+
+      digital_only:
+        true,
+
+      school_type:
+        values.service_type ||
+        null,
+
+      submitted_at:
+        new Date().toISOString()
+
+    }
+
+  };
+
+
+  const {
+    error
+  } =
+    await db
+      .from(
+        "crowrules_yearbook_requests"
+      )
+      .insert(
+        row
+      );
+
+
+  if (error) {
+
+    console.error(
+      "Yearbook request:",
+      error
+    );
+
+    status.classList.add(
+      "error"
+    );
+
+    status.textContent =
+      "The request could not be submitted. Please try again.";
+
+    return;
+
+  }
+
+
+  status.classList.add(
+    "success"
+  );
+
+  status.textContent =
+    "Your digital yearbook request has been received. The CrowRules Yearbook team can now manage it through Admin Pro.";
+
+
+  event.currentTarget.reset();
+
+
+  const yearField =
+    document.querySelector(
+      "#yearbookYear"
+    );
+
+
+  if (yearField) {
+
+    yearField.value =
+      getCurrentSchoolYear();
+
+  }
+
+}
+
+
+/* =========================================================
+   YEARBOOK SETTINGS
+========================================================= */
+
+async function loadYearbookSettings() {
+
+  if (!db) {
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from(
+        "crowrules_yearbook_settings"
+      )
+      .select("*")
+      .eq(
+        "site_key",
+        "crowrules_yearbook"
+      )
+      .maybeSingle();
+
+
+  if (error) {
+
+    console.warn(
+      "Yearbook settings:",
+      error
+    );
+
+    return;
+
+  }
+
+
+  if (!data) {
+    return;
+  }
+
+
+  /*
+    Settings are allowed to control availability
+    without changing the page structure.
+  */
+
+  if (
+    data.request_enabled ===
+    false
+  ) {
+
+    const requestSection =
+      document.querySelector(
+        "#request"
+      );
+
+
+    if (requestSection) {
+
+      const form =
+        requestSection.querySelector(
+          "form"
+        );
+
+
+      if (form) {
+
+        form.style.display =
+          "none";
+
+      }
+
+
+      const message =
+        document.createElement(
+          "div"
+        );
+
+
+      message.className =
+        "empty";
+
+      message.textContent =
+        "Digital yearbook requests are temporarily closed.";
+
+      requestSection
+        .querySelector(
+          ".form-card"
+        )
+        ?.appendChild(
+          message
+        );
+
+    }
+
+  }
+
+
+  if (
+    data.reviews_enabled ===
+    false
+  ) {
+
+    const section =
+      document.querySelector(
+        "#reviews"
+      );
+
+
+    if (section) {
+      section.style.display =
+        "none";
+    }
+
+  }
+
+
+  if (
+    data.members_enabled ===
+    false
+  ) {
+
+    const section =
+      document.querySelector(
+        "#members"
+      );
+
+
+    if (section) {
+      section.style.display =
+        "none";
+    }
+
+  }
+
+
+  if (
+    data.archive_enabled ===
+    false
+  ) {
+
+    const section =
+      document.querySelector(
+        "#yearbooks"
+      );
+
+
+    if (section) {
+      section.style.display =
+        "none";
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   ANALYTICS
+========================================================= */
+
+async function recordPageView() {
+
+  if (!db) {
+    return;
+  }
+
+
+  try {
+
+    await db
+      .from(
+        "analytics_events"
+      )
+      .insert({
+
+        event_type:
+          "page_view",
+
+        table_name:
+          "crowrules_yearbook",
+
+        path:
+          window.location.pathname,
+
+        user_id:
+          currentUser?.id ||
+          null,
+
+        referrer:
+          document.referrer ||
+          null,
+
+        user_agent:
+          navigator.userAgent,
+
+        metadata: {
+
+          site:
+            "CrowRules Yearbook",
+
+          version:
+            "1.2",
+
+          digital_only:
+            true
+
+        }
+
+      });
+
+  } catch (error) {
+
+    console.debug(
+      "Analytics:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  async () => {
+
+    document.querySelector(
+      "#footerYear"
+    ).textContent =
+      new Date().getFullYear();
+
+
+    document.querySelector(
+      "#yearbookYear"
+    ).value =
+      getCurrentSchoolYear();
+
+
+    setupMobileMenu();
+
+    setupActiveNav();
+
+    setupSchoolButtons();
+
+
+    document.querySelector(
+      "#reviewForm"
+    ).addEventListener(
+      "submit",
+      submitReview
+    );
+
+
+    document.querySelector(
+      "#requestForm"
+    ).addEventListener(
+      "submit",
+      submitRequest
+    );
+
+
+    if (!db) {
+
+      emptyMessage(
+        "#yearbookGrid",
+        "Supabase is not configured. Add the public anon/publishable key."
+      );
+
+      emptyMessage(
+        "#memberGrid",
+        "Supabase is not configured."
+      );
+
+      emptyMessage(
+        "#reviewGrid",
+        "Supabase is not configured."
+      );
+
+      updateReviewForm();
+
+      return;
+
+    }
+
+
+    await loadAuth();
+
+
+    await Promise.allSettled([
+
+      loadYearbooks(),
+
+      loadMembers(),
+
+      loadReviews(),
+
+      loadYearbookSettings()
+
+    ]);
+
+
+    await recordPageView();
+
+  }
+);
+
+</script>
+
+<script src="./crowrules-core.js"></script>  
+</body>
+</html>
