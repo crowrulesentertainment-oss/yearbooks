@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050505"><title>CrowRules Membership</title>
+<meta name="description" content="CrowRules Entertainment Membership — Watch it. Create it. Build it.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#050505;--panel:#0d0d0d;--line:#292929;--text:#f5f5f5;--muted:#9a9a9a;--red:#e10600}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0%,rgba(225,6,0,.12),transparent 34%),#050505;color:var(--text);font-family:Montserrat,Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{padding:28px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;align-items:center}.logo{font-family:Orbitron;font-weight:800;letter-spacing:2px}.logo span{color:var(--red)}.status{font-size:13px;color:var(--muted)}.hero{text-align:center;padding:80px 0 45px}.eyebrow{font-family:Orbitron;color:var(--red);font-size:12px;letter-spacing:3px}.hero h1{font-family:Orbitron;font-size:clamp(34px,6vw,70px);margin:14px 0}.hero p{max-width:700px;margin:auto;color:var(--muted);line-height:1.7}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:20px 0 70px}.card{background:linear-gradient(180deg,#111,#090909);border:1px solid var(--line);border-radius:20px;padding:25px;display:flex;flex-direction:column;min-height:390px}.card.featured{border-color:var(--red)}.tier{font-family:Orbitron;font-size:20px}.price{font-size:34px;font-weight:800;margin:18px 0 5px}.price small{font-size:13px;color:var(--muted)}.desc{color:var(--muted);line-height:1.55;min-height:72px}.features{list-style:none;padding:0;margin:10px 0 22px;flex:1}.features li{padding:7px 0;border-bottom:1px solid #181818;font-size:13px;color:#d8d8d8}.btn{border:1px solid #444;background:#151515;color:white;border-radius:10px;padding:12px 15px;text-align:center;font-weight:700;cursor:pointer}.btn.primary{background:var(--red);border-color:var(--red)}.note{text-align:center;color:var(--muted);padding-bottom:50px;font-size:13px;line-height:1.7}@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:580px){.grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}}
+</style></head>
+<body><div class="wrap">
+<header class="top"><div class="logo">CROW<span>RULES</span></div><div class="status" id="authStatus">Loading membership...</div></header>
+<section class="hero"><div class="eyebrow">CROWRULES ENTERTAINMENT</div><h1>WATCH IT. CREATE IT. BUILD IT.</h1><p>Membership connects the CrowRules community across CrowRules TV, Podcasting, Dreamscapes, Tacoma Nights, Back Deck Live, Sports and the future CrowRules universe.</p></section>
+<section class="grid" id="plans"></section>
+<div class="note">Free CROW membership is available now. Paid membership checkout is prepared for Stripe integration; no payment is requested until the billing connection is activated.</div>
+</div>
+<script>
+const SUPABASE_URL='https://cevylpnoexugwgygvtgu.supabase.co';
+const SUPABASE_KEY='sb_publishable_AdfM5y6RqvF3tbvEVzDZSg_JuGTQLD-';
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const plansEl=document.getElementById('plans'),authStatus=document.getElementById('authStatus');
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})}
+async function init(){
+ const a=await sb.auth.getSession(), b=await sb.from('membership_plans').select('*').eq('is_active',true).order('sort_order');
+ const session=a.data.session, plans=b.data, error=b.error;
+ authStatus.textContent=session&&session.user&&session.user.email?'Signed in as '+session.user.email:'Sign in to manage your membership';
+ if(error){plansEl.innerHTML='<p>Membership plans are temporarily unavailable.</p>';return}
+ plansEl.innerHTML=plans.map(function(p){
+   return '<article class="card '+(p.is_featured?'featured':'')+'"><div class="tier">'+esc(p.name)+'</div><div class="price">'+(p.price_cents===0?'FREE':'$'+(p.price_cents/100).toFixed(0))+' <small>'+(p.price_cents===0?'':'/ month')+'</small></div><div class="desc">'+esc(p.description)+'</div><ul class="features">'+(p.features||[]).map(function(f){return '<li>✓ '+esc(f)+'</li>'}).join('')+'</ul><button class="btn '+(p.price_cents===0?'primary':'')+'" onclick="choosePlan(\''+esc(p.plan_key)+'\','+p.price_cents+')">'+(p.price_cents===0?'Join CROW':'Choose '+esc(p.name))+'</button></article>';
+ }).join('');
+}
+async function choosePlan(key,price){
+ const a=await sb.auth.getSession(),session=a.data.session;
+ if(!session){location.href='login.html?next=membership.html';return}
+ if(price===0){
+   const r=await sb.from('members').upsert({user_id:session.user.id,email:session.user.email,membership_type:'CROW',status:'Active'},{onConflict:'user_id'});
+   if(r.error){alert(r.error.message);return}
+   alert('Your free CROW membership is active.');return;
+ }
+ alert('Paid checkout is prepared for Stripe connection but is not activated yet. Selected plan: '+key+'.');
+}
+sb.auth.onAuthStateChange(function(){init()});init();
+</script></body></html>
