@@ -88,7 +88,7 @@ async function loadPortal(user){
  ]);
  const requests=req.data||[], reviews=res.data||[];
  $("#requestCount").textContent=String(requests.length);$("#reviewCount").textContent=String(reviews.length);
- $("#requestList").innerHTML=requests.length?requests.map(x=>item(x.project_name||x.school_or_group||x.organization||"Digital Yearbook Request",x.project_details||("Requested for "+(x.yearbook_year||"a future edition")),x.status,x.created_at?fmt(x.created_at):"")).join(""):'<div class="empty">No yearbook requests yet. <a href="./index.html#request">Start your first project.</a></div>';
+ $("#requestList").innerHTML=requests.length?requests.map(x=>item(x.project_name||x.school_or_group||x.organization||"Digital Yearbook Request",x.project_details||("Requested for "+(x.yearbook_year||"a future edition")),x.status,x.created_at?fmt(x.created_at):"")+'<div style="margin-top:8px"><a class="btn" href="./project.html?id='+encodeURIComponent(x.id)+'">OPEN WORKSPACE</a></div>')).join(""):'<div class="empty">No yearbook requests yet. <a href="./index.html#request">Start your first project.</a></div>';
  $("#reviewList").innerHTML=reviews.length?reviews.map(x=>item("Yearbook Review",x.review_text||"Review submitted",x.is_published?"published":"pending",x.created_at?fmt(x.created_at):"")).join(""):'<div class="empty">You have not submitted a yearbook review yet.</div>';
  const first=requests.find(x=>x.school_or_group||x.organization);
  if(first) $("#connections").innerHTML='<div class="item"><strong>'+esc(first.school_or_group||first.organization)+'</strong><p>Your connection from a submitted yearbook request.</p><div class="meta">This profile area will expand as CrowRules Yearbooks adds school, alumni and community profiles.</div></div>';
