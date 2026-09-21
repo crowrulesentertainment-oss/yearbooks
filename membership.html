@@ -1,45 +1,189 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#050505"><title>CrowRules Membership</title>
-<meta name="description" content="CrowRules Entertainment Membership — Watch it. Create it. Build it.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05050b">
+<meta name="color-scheme" content="dark">
+<title>CrowRules Membership | One Account. One Universe.</title>
+<meta name="description" content="Manage your CrowRules universal membership across the CrowRules Entertainment universe.">
+<meta property="og:title" content="CrowRules Membership | One Account. One Universe.">
+<meta property="og:description" content="One CrowRules account connects your membership across the CrowRules Entertainment universe.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--bg:#050505;--panel:#0d0d0d;--line:#292929;--text:#f5f5f5;--muted:#9a9a9a;--red:#e10600}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0%,rgba(225,6,0,.12),transparent 34%),#050505;color:var(--text);font-family:Montserrat,Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{padding:28px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;align-items:center}.logo{font-family:Orbitron;font-weight:800;letter-spacing:2px}.logo span{color:var(--red)}.status{font-size:13px;color:var(--muted)}.hero{text-align:center;padding:80px 0 45px}.eyebrow{font-family:Orbitron;color:var(--red);font-size:12px;letter-spacing:3px}.hero h1{font-family:Orbitron;font-size:clamp(34px,6vw,70px);margin:14px 0}.hero p{max-width:700px;margin:auto;color:var(--muted);line-height:1.7}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:20px 0 70px}.card{background:linear-gradient(180deg,#111,#090909);border:1px solid var(--line);border-radius:20px;padding:25px;display:flex;flex-direction:column;min-height:390px}.card.featured{border-color:var(--red)}.tier{font-family:Orbitron;font-size:20px}.price{font-size:34px;font-weight:800;margin:18px 0 5px}.price small{font-size:13px;color:var(--muted)}.desc{color:var(--muted);line-height:1.55;min-height:72px}.features{list-style:none;padding:0;margin:10px 0 22px;flex:1}.features li{padding:7px 0;border-bottom:1px solid #181818;font-size:13px;color:#d8d8d8}.btn{border:1px solid #444;background:#151515;color:white;border-radius:10px;padding:12px 15px;text-align:center;font-weight:700;cursor:pointer}.btn.primary{background:var(--red);border-color:var(--red)}.note{text-align:center;color:var(--muted);padding-bottom:50px;font-size:13px;line-height:1.7}@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:580px){.grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}}
-</style></head>
-<body><div class="wrap">
-<header class="top"><div class="logo">CROW<span>RULES</span></div><div class="status" id="authStatus">Loading membership...</div></header>
-<section class="hero"><div class="eyebrow">CROWRULES ENTERTAINMENT</div><h1>WATCH IT. CREATE IT. BUILD IT.</h1><p>Membership connects the CrowRules community across CrowRules TV, Podcasting, Dreamscapes, Tacoma Nights, Back Deck Live, Sports and the future CrowRules universe.</p></section>
-<section class="grid" id="plans"></section>
-<div class="note">Free CROW membership is available now. Paid membership checkout is prepared for Stripe integration; no payment is requested until the billing connection is activated.</div>
-</div>
+:root{
+ --bg:#030308;--panel:rgba(255,255,255,.045);--panel2:rgba(255,255,255,.025);
+ --line:rgba(255,255,255,.11);--text:#f7f7fb;--muted:#9b9ba8;
+ --soft:#d8d8e2;--accent:#e10600;--max:1180px
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;background:
+ radial-gradient(circle at 50% -10%,rgba(225,6,0,.16),transparent 35%),
+ radial-gradient(circle at 0% 100%,rgba(80,60,180,.12),transparent 30%),var(--bg);
+ color:var(--text);font-family:Montserrat,Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+.wrap{width:min(var(--max),92%);margin:auto}
+.skip{position:fixed;left:12px;top:12px;z-index:100;
+ padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:#05050b;
+ transform:translateY(-150%)}.skip:focus{transform:translateY(0)}
+.top{position:sticky;top:0;z-index:20;padding:16px 0;border-bottom:1px solid var(--line);
+ background:rgba(3,3,8,.78);backdrop-filter:blur(18px)}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{font-family:Orbitron;font-weight:900;letter-spacing:2px}.logo span{color:var(--accent)}
+.nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.nav a,.nav button{border:1px solid var(--line);background:var(--panel2);color:var(--soft);
+ border-radius:999px;padding:9px 13px;font-size:11px;font-weight:700;cursor:pointer}
+.nav a:hover,.nav button:hover{border-color:rgba(255,255,255,.35);background:var(--panel)}
+.status{font-size:11px;color:var(--muted);max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hero{text-align:center;padding:92px 0 54px}
+.eyebrow{font-family:Orbitron;color:#ff4a44;font-size:11px;letter-spacing:3px}
+.hero h1{font-family:Orbitron;font-size:clamp(34px,7vw,78px);line-height:.95;margin:18px 0}
+.hero p{max-width:760px;margin:auto;color:var(--muted);line-height:1.8;font-size:14px}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:28px}
+.btn{border:1px solid #3b3b44;background:#111118;color:#fff;border-radius:12px;padding:12px 17px;
+ font-weight:800;cursor:pointer}.btn.primary{background:var(--accent);border-color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:20px 0 60px}
+.card{background:linear-gradient(180deg,#111118,#09090e);border:1px solid var(--line);border-radius:22px;
+ padding:25px;display:flex;flex-direction:column;min-height:390px;box-shadow:0 18px 60px rgba(0,0,0,.18)}
+.card.featured{border-color:rgba(225,6,0,.7);box-shadow:0 0 35px rgba(225,6,0,.08)}
+.badge{display:inline-block;align-self:flex-start;padding:5px 9px;border-radius:999px;background:rgba(225,6,0,.12);
+ color:#ff7772;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.tier{font-family:Orbitron;font-size:20px;margin-top:10px}.price{font-size:36px;font-weight:900;margin:16px 0 5px}
+.price small{font-size:12px;color:var(--muted);font-weight:600}.desc{color:var(--muted);line-height:1.6;min-height:78px;font-size:13px}
+.features{list-style:none;padding:0;margin:12px 0 24px;flex:1}.features li{padding:8px 0;border-bottom:1px solid #19191f;font-size:12px;color:#ddd}
+.note{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:20px;margin-bottom:60px;color:var(--muted);
+ font-size:12px;line-height:1.7;text-align:center}
+.footer{padding:28px 0 50px;border-top:1px solid var(--line);color:#777;font-size:11px;text-align:center}
+#toast{position:fixed;right:18px;bottom:18px;z-index:50;max-width:360px;padding:14px 16px;border:1px solid var(--line);
+ border-radius:14px;background:#111118;box-shadow:0 15px 50px rgba(0,0,0,.4);display:none;font-size:12px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.status{max-width:180px}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.nav{width:100%}.hero{padding-top:65px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+:focus-visible{outline:2px solid #fff;outline-offset:3px}
+</style>
+</head>
+<body>
+<a class="skip" href="#plans">Skip to membership plans</a>
+<header class="top">
+  <div class="wrap topbar">
+    <a class="logo" href="./index.html" aria-label="CrowRules Yearbooks home">CROW<span>RULES</span> YEARBOOKS</a>
+    <div class="nav">
+      <a href="./index.html">Yearbooks</a>
+      <a href="https://crowrulesentertainment-oss.github.io/crowrulestv/">CrowRules TV</a>
+      <a href="https://crowrulesentertainment-oss.github.io/dreamscapes/">Dreamscapes</a>
+      <button id="authButton" type="button">Sign in with Google</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="hero wrap">
+  <div class="eyebrow">CROWRULES UNIVERSAL MEMBERSHIP</div>
+  <h1>ONE ACCOUNT.<br>ONE UNIVERSE.</h1>
+  <p>Your CrowRules membership is designed to travel with you across the CrowRules Entertainment universe. Sign in once and manage your account from one place.</p>
+  <div class="actions">
+    <button class="btn primary" id="refreshButton" type="button">Refresh Membership</button>
+    <button class="btn" id="signOutButton" type="button" hidden>Sign Out</button>
+  </div>
+</section>
+
+<section class="wrap" id="plans" aria-live="polite">
+  <div id="plansGrid" class="grid"><article class="card"><div class="tier">Loading…</div><div class="desc">Loading current CrowRules membership plans.</div></article></div>
+  <div class="note">Free CROW membership can be activated when available in your CrowRules account. Paid plans are displayed from the active membership catalog; checkout is only initiated when a connected payment flow is configured.</div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">© <span id="year"></span> CrowRules Entertainment · CrowRules Yearbooks</div>
+</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+
 <script>
-const SUPABASE_URL='https://cevylpnoexugwgygvtgu.supabase.co';
-const SUPABASE_KEY='sb_publishable_AdfM5y6RqvF3tbvEVzDZSg_JuGTQLD-';
+(function(){
+"use strict";
+const SUPABASE_URL="https://cevylpnoexugwgygvtgu.supabase.co";
+const SUPABASE_KEY="sb_publishable_AdfM5y6RqvF3tbvEVzDZSg_JuGTQLD-";
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const plansEl=document.getElementById('plans'),authStatus=document.getElementById('authStatus');
-function esc(s){return String(s||'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})}
-async function init(){
- const a=await sb.auth.getSession(), b=await sb.from('membership_plans').select('*').eq('is_active',true).order('sort_order');
- const session=a.data.session, plans=b.data, error=b.error;
- authStatus.textContent=session&&session.user&&session.user.email?'Signed in as '+session.user.email:'Sign in to manage your membership';
- if(error){plansEl.innerHTML='<p>Membership plans are temporarily unavailable.</p>';return}
- plansEl.innerHTML=plans.map(function(p){
-   return '<article class="card '+(p.is_featured?'featured':'')+'"><div class="tier">'+esc(p.name)+'</div><div class="price">'+(p.price_cents===0?'FREE':'$'+(p.price_cents/100).toFixed(0))+' <small>'+(p.price_cents===0?'':'/ month')+'</small></div><div class="desc">'+esc(p.description)+'</div><ul class="features">'+(p.features||[]).map(function(f){return '<li>✓ '+esc(f)+'</li>'}).join('')+'</ul><button class="btn '+(p.price_cents===0?'primary':'')+'" onclick="choosePlan(\''+esc(p.plan_key)+'\','+p.price_cents+')">'+(p.price_cents===0?'Join CROW':'Choose '+esc(p.name))+'</button></article>';
- }).join('');
+const plansGrid=document.getElementById("plansGrid");
+const authButton=document.getElementById("authButton");
+const signOutButton=document.getElementById("signOutButton");
+const toast=document.getElementById("toast");
+
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+function notify(message){
+ toast.textContent=message;toast.style.display="block";
+ clearTimeout(window.__crToast);window.__crToast=setTimeout(()=>toast.style.display="none",4200);
+}
+async function getSession(){return (await sb.auth.getSession()).data.session;}
+async function renderAuth(){
+ const session=await getSession();
+ if(session){
+   authButton.textContent=session.user.email||"Signed in";
+   authButton.disabled=true;
+   signOutButton.hidden=false;
+ }else{
+   authButton.textContent="Sign in with Google";
+   authButton.disabled=false;
+   signOutButton.hidden=true;
+ }
+ return session;
+}
+async function loadPlans(){
+ const {data,error}=await sb.from("membership_plans").select("*").eq("is_active",true).order("sort_order");
+ if(error){plansGrid.innerHTML='<article class="card"><div class="tier">Plans unavailable</div><div class="desc">The membership catalog could not be loaded right now.</div></article>';notify(error.message);return;}
+ if(!data?.length){plansGrid.innerHTML='<article class="card"><div class="tier">No active plans</div><div class="desc">No active membership plans are currently published.</div></article>';return;}
+ plansGrid.innerHTML=data.map(p=>{
+   const price=Number(p.price_cents||0);
+   const free=price===0;
+   return '<article class="card '+(p.is_featured?'featured':'')+'">'+
+     (p.is_featured?'<span class="badge">Featured</span>':'')+
+     '<div class="tier">'+esc(p.name||p.plan_key)+'</div>'+
+     '<div class="price">'+(free?"FREE":"$"+(price/100).toFixed(price%100?2:0))+
+     ' <small>'+ (free?"":" / month") +'</small></div>'+
+     '<div class="desc">'+esc(p.description||"")+'</div>'+
+     '<ul class="features">'+(Array.isArray(p.features)?p.features:[]).map(f=>'<li>✓ '+esc(f)+'</li>').join("")+'</ul>'+
+     '<button class="btn '+(free?"primary":"")+'" data-plan="'+esc(p.plan_key||"")+'" data-price="'+price+'">'+
+     (free?"Activate CROW":"Choose "+esc(p.name||"plan"))+'</button></article>';
+ }).join("");
+ plansGrid.querySelectorAll("button[data-plan]").forEach(btn=>btn.addEventListener("click",()=>choosePlan(btn.dataset.plan,Number(btn.dataset.price))));
 }
 async function choosePlan(key,price){
- const a=await sb.auth.getSession(),session=a.data.session;
- if(!session){location.href='login.html?next=membership.html';return}
- if(price===0){
-   const r=await sb.from('members').upsert({user_id:session.user.id,email:session.user.email,membership_type:'CROW',status:'Active'},{onConflict:'user_id'});
-   if(r.error){alert(r.error.message);return}
-   alert('Your free CROW membership is active.');return;
+ const session=await getSession();
+ if(!session){
+   const {error}=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.href}});
+   if(error) notify(error.message);
+   return;
  }
- alert('Paid checkout is prepared for Stripe connection but is not activated yet. Selected plan: '+key+'.');
+ if(price===0){
+   const {data,error}=await sb.rpc("ensure_crow_membership");
+   if(error){notify("Membership activation failed: "+error.message);return;}
+   notify("Your CROW membership is active.");
+   await renderAuth();
+   return;
+ }
+ notify("Paid checkout is not connected on this page yet. Selected plan: "+key+".");
 }
-sb.auth.onAuthStateChange(function(){init()});init();
-</script></body></html>
+authButton.addEventListener("click",async()=>{
+ const {error}=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.href}});
+ if(error) notify(error.message);
+});
+signOutButton.addEventListener("click",async()=>{
+ const {error}=await sb.auth.signOut();
+ if(error) notify(error.message); else notify("Signed out.");
+ await renderAuth();
+});
+document.getElementById("refreshButton").addEventListener("click",async()=>{await renderAuth();await loadPlans();notify("Membership refreshed.");});
+sb.auth.onAuthStateChange(()=>{setTimeout(renderAuth,0);});
+document.getElementById("year").textContent=new Date().getFullYear();
+Promise.all([renderAuth(),loadPlans()]).catch(e=>notify(e.message||String(e)));
+})();
+</script>
+</body>
+</html>
