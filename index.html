@@ -4,15 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CrowRules Yearbook — Digital School Yearbooks</title>
-
-<meta<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>CrowRules Yearbooks | In Development</title>
+<title>CrowRules Yearbooks | Every Memory Has a Story</title>
+<meta name="description" content="CrowRules Yearbooks — digital school memories, community yearbooks, profiles, stories and shared history. In development for January 1, 2029.">
+<meta name="theme-color" content="#05050b">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CrowRules Yearbooks | Every Memory Has a Story">
+<meta property="og:description" content="Digital school memories, community yearbooks, profiles, stories and shared history.">
+<meta property="og:url" content="https://crowrulesentertainment-oss.github.io/yearbooks/">
+<meta name="twitter:card" content="summary">
 
 <meta
   name="description"
@@ -1868,6 +1868,34 @@ footer strong {
 
 }
 
+
+/* =========================================================
+   YEARBOOKS 2026 UI UPGRADE
+   ========================================================= */
+.skip-link{
+  position:fixed;left:12px;top:12px;z-index:10001;
+  padding:10px 14px;border:1px solid rgba(255,255,255,.25);
+  border-radius:999px;background:#05050b;color:#fff;
+  transform:translateY(-150%);transition:transform .2s ease;
+}
+.skip-link:focus{transform:translateY(0)}
+:focus-visible{outline:2px solid #fff;outline-offset:4px}
+.nav-links a[aria-current="true"]{color:#fff}
+.nav-links a[href="./membership.html"]{
+  border:1px solid rgba(255,255,255,.22);border-radius:999px;
+  padding:8px 12px;background:rgba(255,255,255,.04)
+}
+.nav-links a[href="./membership.html"]:hover{
+  background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.4)
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;
+  animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+@media (max-width:720px){
+  .nav-links a[href="./membership.html"]{padding:7px 10px}
+}
+
 </style>
 </head>
 
@@ -3009,6 +3037,48 @@ document
         }
     );
 
+</script>
+
+
+<script>
+(function(){
+  "use strict";
+  const navLinks=[...document.querySelectorAll('.nav-links a[data-section]')];
+  const sections=[...document.querySelectorAll('main section[id], section[id]')];
+  const setActive=()=>{
+    const y=window.scrollY+140;
+    let active='home';
+    for(const section of sections){
+      if(section.offsetTop<=y) active=section.id;
+    }
+    navLinks.forEach(a=>{
+      const key=a.dataset.section;
+      if(key==="membership") return;
+      if(key===active) a.setAttribute('aria-current','true');
+      else a.removeAttribute('aria-current');
+    });
+  };
+  window.addEventListener('scroll',setActive,{passive:true});
+  setActive();
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      const menu=document.getElementById('mobileMenu');
+      const button=document.getElementById('mobileMenuButton');
+      if(menu && menu.classList.contains('open')){
+        menu.classList.remove('open');
+        if(button) button.setAttribute('aria-expanded','false');
+      }
+    }
+  });
+
+  const footerYear=document.getElementById('footerYear');
+  if(footerYear) footerYear.textContent=new Date().getFullYear();
+
+  window.addEventListener('error',e=>{
+    console.warn('[CrowRules Yearbooks] UI error:',e.message);
+  });
+})();
 </script>
 
 </body>
@@ -4585,6 +4655,7 @@ footer {
 </head>
 
 <body>
+<a class="skip-link" href="#home">Skip to content</a>
 
 <!-- =========================================================
      NAV
@@ -4668,6 +4739,13 @@ footer {
           data-section="request"
         >
           Request
+        </a>
+
+        <a
+          href="./membership.html"
+          data-section="membership"
+        >
+          Membership
         </a>
 
       </div>
