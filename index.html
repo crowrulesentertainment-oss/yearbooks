@@ -1896,6 +1896,12 @@ footer strong {
   .nav-links a[href="./membership.html"]{padding:7px 10px}
 }
 
+
+/* Yearbooks Portal upgrade */
+#portal .container{max-width:1200px}
+#portal .btn{width:100%;text-align:center}
+@media(max-width:760px){#portal .container>div:last-child{grid-template-columns:1fr!important}}
+
 </style>
 </head>
 
@@ -5764,6 +5770,21 @@ footer {
 <!-- =========================================================
      REQUEST
 ========================================================= -->
+
+
+<!-- YEARBOOKS-PORTAL-UPGRADE -->
+<section class="section" id="portal">
+  <div class="container">
+    <div class="kicker">YEARBOOK CREATOR PORTAL</div>
+    <h2 class="section-title">BUILD THE MEMORY</h2>
+    <p class="section-intro">Members can request a yearbook, propose a school or community edition, and help shape the archive.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px">
+      <a class="btn btn-secondary" href="./membership.html">JOIN / SIGN IN</a>
+      <a class="btn btn-secondary" href="#request">REQUEST A YEARBOOK</a>
+      <a class="btn btn-secondary" href="#yearbooks">BROWSE YEARBOOKS</a>
+    </div>
+  </div>
+</section>
 
 <section id="request">
 
