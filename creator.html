@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05050b">
+<meta name="color-scheme" content="dark">
+<title>CrowRules Yearbook Creator Portal</title>
+<meta name="description" content="Your CrowRules Yearbook Creator Portal — membership, yearbook requests, submissions, reviews and community identity.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#030308;--panel:#0d0d14;--panel2:#11111a;--line:rgba(255,255,255,.11);--text:#f7f7fb;--muted:#9b9ba8;--soft:#dddde6;--red:#e10600;--cyan:#5ee7ff;--max:1180px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -10%,rgba(225,6,0,.16),transparent 32%),radial-gradient(circle at 100% 60%,rgba(50,100,255,.10),transparent 30%),var(--bg);color:var(--text);font-family:Montserrat,Arial,sans-serif}a{color:inherit;text-decoration:none}button{font:inherit}.wrap{width:min(var(--max),92%);margin:auto}
+.top{position:sticky;top:0;z-index:30;background:rgba(3,3,8,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}.topbar{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:16px}.logo{font:900 12px Orbitron;letter-spacing:2px}.logo span{color:var(--red)}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav a,.nav button,.btn{border:1px solid var(--line);background:rgba(255,255,255,.025);color:var(--soft);border-radius:999px;padding:10px 14px;font-size:11px;font-weight:800;cursor:pointer}.nav a:hover,.nav button:hover,.btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.07)}.btn.primary{background:var(--red);border-color:var(--red);color:#fff}.btn.danger{border-color:rgba(255,80,80,.35);color:#ff9a96}
+.hero{text-align:center;padding:82px 0 46px}.eyebrow{font:700 10px Orbitron;letter-spacing:3px;color:#ff6b66}.hero h1{font:900 clamp(34px,7vw,78px)/.95 Orbitron;margin:16px 0}.hero p{max-width:760px;margin:auto;color:var(--muted);line-height:1.8;font-size:14px}.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:25px}
+#authState{margin:18px auto 0;max-width:700px;color:#aaa;font-size:12px}
+.portal{padding:30px 0 80px}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}.card{grid-column:span 4;background:linear-gradient(180deg,#11111a,#08080d);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 18px 60px rgba(0,0,0,.2)}.card.wide{grid-column:span 8}.card.full{grid-column:1/-1}.card h2{font:700 20px Orbitron;margin:0 0 8px}.card h3{margin:0;font-size:15px}.card p{color:var(--muted);font-size:12px;line-height:1.7}.meta{color:#777;font-size:10px;letter-spacing:1px;text-transform:uppercase}.identity{display:flex;gap:15px;align-items:center}.avatar{width:64px;height:64px;border-radius:50%;border:1px solid var(--line);object-fit:cover;background:#15151e}.avatar-fallback{display:grid;place-items:center;font:800 22px Orbitron;color:#aaa}.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.stat{border:1px solid var(--line);border-radius:14px;padding:14px;background:rgba(255,255,255,.025)}.stat strong{display:block;font:800 24px Orbitron}.stat span{display:block;color:#777;font-size:9px;margin-top:5px;letter-spacing:1px;text-transform:uppercase}.list{display:grid;gap:10px;margin-top:16px}.item{border:1px solid var(--line);border-radius:14px;padding:14px;background:rgba(255,255,255,.02)}.item-row{display:flex;justify-content:space-between;gap:10px}.status{padding:5px 8px;border-radius:999px;background:rgba(94,231,255,.08);color:var(--cyan);font-size:9px;font-weight:800;text-transform:uppercase;white-space:nowrap}.empty{color:#777;border:1px dashed var(--line);border-radius:14px;padding:18px;font-size:11px;line-height:1.6}.profile-line{color:var(--soft);font-size:12px;margin-top:5px;overflow-wrap:anywhere}.notice{border:1px solid rgba(225,6,0,.25);background:rgba(225,6,0,.06);padding:18px;border-radius:16px;color:#cfcfd8;font-size:12px;line-height:1.7;margin-bottom:18px}.hidden{display:none!important}.footer{border-top:1px solid var(--line);padding:30px 0 50px;text-align:center;color:#777;font-size:10px}
+@media(max-width:900px){.card,.card.wide{grid-column:span 6}}@media(max-width:620px){.topbar{padding:12px 0;align-items:flex-start;flex-direction:column}.nav{width:100%}.card,.card.wide{grid-column:1/-1}.stat-grid{grid-template-columns:1fr}.hero{padding-top:60px}}
+:focus-visible{outline:2px solid #fff;outline-offset:3px}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap topbar">
+<a class="logo" href="./index.html">CROW<span>RULES</span> YEARBOOKS</a>
+<nav class="nav" aria-label="Creator navigation">
+<a href="./index.html">Yearbooks</a><a href="./membership.html">Membership</a>
+<a href="https://crowrulesentertainment-oss.github.io/dreamscapes/">Dreamscapes</a>
+<button id="signIn" type="button">Sign in with Google</button><button id="signOut" class="danger hidden" type="button">Sign out</button>
+</nav></div></header>
+<main>
+<section class="hero wrap">
+<div class="eyebrow">YEARBOOK CREATOR PORTAL</div>
+<h1>BUILD THE MEMORY.</h1>
+<p>Your private CrowRules workspace for tracking yearbook requests, reviews, community identity and the growing digital archive.</p>
+<div class="actions"><a class="btn primary" href="#requests">MY REQUESTS</a><a class="btn" href="./index.html#request">START A YEARBOOK</a></div>
+<div id="authState">Sign in to open your personal Creator Portal.</div>
+</section>
+<section id="portal" class="portal wrap hidden">
+<div id="loginNotice" class="notice hidden">Sign in with your CrowRules member account to load your private portal.</div>
+<div class="grid">
+<article class="card wide">
+<div class="meta">Your CrowRules Identity</div><h2>Creator Profile</h2>
+<div class="identity"><div id="avatarWrap" class="avatar avatar-fallback">C</div><div><h3 id="displayName">CrowRules Member</h3><div id="email" class="profile-line"></div><div id="memberSince" class="profile-line"></div></div></div>
+<div class="stat-grid"><div class="stat"><strong id="requestCount">0</strong><span>Requests</span></div><div class="stat"><strong id="reviewCount">0</strong><span>Reviews</span></div><div class="stat"><strong id="archiveCount">0</strong><span>Published Editions</span></div></div>
+</article>
+<article class="card"><div class="meta">Membership</div><h2>One Account. One Universe.</h2><p id="membershipText">Your CrowRules account connects your identity across the universe.</p><a class="btn primary" href="./membership.html">MANAGE MEMBERSHIP</a></article>
+<article id="requests" class="card wide"><div class="meta">Private Workspace</div><h2>My Yearbook Requests</h2><p>Track digital yearbook projects you submitted to CrowRules.</p><div id="requestList" class="list"></div></article>
+<article class="card"><div class="meta">Your Voice</div><h2>My Reviews</h2><p>Reviews you have submitted are shown here, including moderation status.</p><div id="reviewList" class="list"></div></article>
+<article class="card full"><div class="meta">Community + School</div><h2>Your Yearbook Connections</h2><p>School, alumni, community and creator relationships will live here as the Yearbook platform grows.</p><div id="connections" class="empty">No school or community connections have been added to your profile yet. Start by submitting a yearbook request.</div></article>
+<article class="card full"><div class="meta">Digital Archive</div><h2>Published Yearbooks</h2><p>Published editions available through the CrowRules Yearbook archive.</p><div id="archiveList" class="list"></div></article>
+</div>
+</section>
+</main>
+<footer class="footer">© <span id="year"></span> CrowRules Entertainment · CrowRules Yearbook Creator Portal</footer>
+<script>
+(function(){
+"use strict";
+const URL="https://zauxdqyssratvzmomozf.supabase.co";
+const KEY="sb_publishable_-Z6wecSOxwOk6IBut2zLnw_8DfRxnE9";
+const db=window.supabase.createClient(URL,KEY);
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const fmt=d=>d?new Date(d).toLocaleDateString([],{year:"numeric",month:"short",day:"numeric"}):"";
+const nameOf=u=>u?.user_metadata?.display_name||u?.user_metadata?.full_name||u?.email?.split("@")[0]||"CrowRules Member";
+const status=s=>String(s||"new").replace(/[_-]+/g," ");
+function item(title,body,stat,date){
+return '<div class="item"><div class="item-row"><strong>'+esc(title)+'</strong><span class="status">'+esc(status(stat))+'</span></div><p>'+esc(body||"")+'</p><div class="meta">'+esc(date||"")+'</div></div>';
+}
+async function loadArchive(){
+ const {data,error}=await db.from("crowrules_yearbooks").select("id,title,subtitle,year,yearbook_url,preview_url,status").eq("status","published").order("year",{ascending:false}).limit(12);
+ const el=$("#archiveList");
+ if(error||!data?.length){el.innerHTML='<div class="empty">No published digital editions are available yet.</div>';$("#archiveCount").textContent="0";return;}
+ $("#archiveCount").textContent=String(data.length);
+ el.innerHTML=data.map(x=>item(x.title||"Digital Yearbook",x.subtitle||("Yearbook "+(x.year||"")),"published",x.year||"")+((x.yearbook_url||x.preview_url)?'<div style="margin-top:8px"><a class="btn" href="'+esc(x.yearbook_url||x.preview_url)+'" target="_blank" rel="noopener">OPEN EDITION</a></div>':"")).join("");
+}
+async function loadPortal(user){
+ $("#portal").classList.remove("hidden");$("#loginNotice").classList.add("hidden");
+ $("#displayName").textContent=nameOf(user);$("#email").textContent=user.email||"";
+ $("#memberSince").textContent="Account created "+fmt(user.created_at);
+ const avatar=user.user_metadata?.avatar_url||user.user_metadata?.picture;
+ if(avatar){$("#avatarWrap").outerHTML='<img id="avatarWrap" class="avatar" src="'+esc(avatar)+'" alt="">';}else{$("#avatarWrap").textContent=nameOf(user).slice(0,1).toUpperCase();}
+ const [req,res] = await Promise.all([
+   db.from("crowrules_yearbook_requests").select("id,project_name,school_or_group,organization,yearbook_year,status,created_at,project_details").eq("user_id",user.id).order("created_at",{ascending:false}).limit(50),
+   db.from("crowrules_yearbook_reviews").select("id,reviewer_role,rating,review_text,is_published,created_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(50)
+ ]);
+ const requests=req.data||[], reviews=res.data||[];
+ $("#requestCount").textContent=String(requests.length);$("#reviewCount").textContent=String(reviews.length);
+ $("#requestList").innerHTML=requests.length?requests.map(x=>item(x.project_name||x.school_or_group||x.organization||"Digital Yearbook Request",x.project_details||("Requested for "+(x.yearbook_year||"a future edition")),x.status,x.created_at?fmt(x.created_at):"")).join(""):'<div class="empty">No yearbook requests yet. <a href="./index.html#request">Start your first project.</a></div>';
+ $("#reviewList").innerHTML=reviews.length?reviews.map(x=>item("Yearbook Review",x.review_text||"Review submitted",x.is_published?"published":"pending",x.created_at?fmt(x.created_at):"")).join(""):'<div class="empty">You have not submitted a yearbook review yet.</div>';
+ const first=requests.find(x=>x.school_or_group||x.organization);
+ if(first) $("#connections").innerHTML='<div class="item"><strong>'+esc(first.school_or_group||first.organization)+'</strong><p>Your connection from a submitted yearbook request.</p><div class="meta">This profile area will expand as CrowRules Yearbooks adds school, alumni and community profiles.</div></div>';
+ await loadArchive();
+}
+async function render(){
+ const {data:{session}}=await db.auth.getSession(); const user=session?.user;
+ $("#signIn").classList.toggle("hidden",!!user);$("#signOut").classList.toggle("hidden",!user);
+ if(!user){$("#portal").classList.add("hidden");$("#loginNotice").classList.remove("hidden");$("#authState").textContent="Sign in to open your personal Creator Portal.";return;}
+ $("#authState").textContent="Signed in as "+(user.email||nameOf(user));await loadPortal(user);
+}
+$("#signIn").onclick=async()=>{const {error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.href}});if(error)alert(error.message)};
+$("#signOut").onclick=async()=>{await db.auth.signOut();location.reload()};
+db.auth.onAuthStateChange(()=>setTimeout(render,0));
+$("#year").textContent=new Date().getFullYear();render().catch(e=>{$("#authState").textContent="Portal error: "+e.message});
+})();
+</script>
+</body>
+</html>
