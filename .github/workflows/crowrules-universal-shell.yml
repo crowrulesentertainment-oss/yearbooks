@@ -1,0 +1,41 @@
+name: CrowRules Universal Shell Sync
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  shell-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inject Universal CrowRules Shell
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          SCRIPT='https://crowrulesentertainment-oss.github.io/crowrulesentertainment/js/crowrules-sitewide.js?v=1'
+          tag=f'<script src="{SCRIPT}" defer></script>'
+          changed=[]
+          for p in Path('.').rglob('*.html'):
+              if '.git' in p.parts: continue
+              s=p.read_text(encoding='utf-8')
+              if SCRIPT in s: continue
+              if re.search(r'</head>',s,re.I):
+                  s=re.sub(r'</head>',tag+'</head>',s,count=1,flags=re.I)
+                  p.write_text(s,encoding='utf-8')
+                  changed.append(str(p))
+          print('Injected:',len(changed))
+          for x in changed: print(x)
+      - name: Commit shell updates
+        run: |
+          git config user.name "CrowRules Universal Shell"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add '*.html'
+          if git diff --cached --quiet; then
+            echo "No HTML changes needed."
+            exit 0
+          fi
+          git commit -m "V1 standardize Universal CrowRules Shell across all HTML pages"
+          git push
