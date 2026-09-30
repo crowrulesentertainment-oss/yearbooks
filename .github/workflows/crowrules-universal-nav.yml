@@ -1,0 +1,38 @@
+name: CrowRules Universal Navigation
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inject navigation
+        shell: bash
+        run: |
+          set -e
+          SCRIPT='https://crowrulesentertainment-oss.github.io/crowrulesentertainment/js/crowrules-sitewide.js?v=2'
+          changed=0
+          while IFS= read -r -d '' file; do
+            if grep -Fq 'crowrules-sitewide.js' "$file"; then continue; fi
+            if grep -qi '</head>' "$file"; then
+              python3 - "$file" "$SCRIPT" <<'PY'
+import pathlib,sys
+p=pathlib.Path(sys.argv[1]); s=sys.argv[2]
+t=p.read_text(encoding='utf-8')
+t=t.replace('</head>',f'<script src="{s}" defer></script>\n</head>',1)
+p.write_text(t,encoding='utf-8')
+PY
+              changed=1
+            fi
+          done < <(find . -type f -name '*.html' -not -path './.git/*' -print0)
+          if [ "$changed" -eq 1 ]; then
+            git config user.name 'CrowRules Universal Navigation'
+            git config user.email 'actions@github.com'
+            git add -A
+            git commit -m 'Add universal CrowRules membership navigation'
+            git push
+          fi
