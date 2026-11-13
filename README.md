@@ -40,6 +40,10 @@ The existing `admin/index.html` and Universal Admin integration are preserved. T
 
 Video asset records reference paths inside the private bucket. Uploads must be performed by an authorized administrator. Do not expose Supabase secret or service-role keys in GitHub Pages code.
 
+## Meeting requests
+
+The public meeting form submits to the `cr-yearbook-meeting-request` Edge Function. Requests are validated, rate-limited and stored in `cr_yearbook_meeting_requests`; only Universal Admin users can view and manage them in the Control Center. The form does not accept student records or media uploads.
+
 ## Production requirements
 
 Before publishing real student videos, confirm school authorization, guardian consent where required, filming opt-outs, music and likeness rights, accessibility captions, retention and deletion terms, and school-approved access lists. The current passcode is an additional gate, not a replacement for consent or school authorization.
