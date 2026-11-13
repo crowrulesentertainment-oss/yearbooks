@@ -1,43 +1,29 @@
-# CrowRules Yearbooks — Website Starter
+# CrowRules Yearbooks
 
-A responsive, cinematic, video-first multi-page website concept for CrowRules Entertainment.
+Multi-page yearbook publishing and school-memory platform for CrowRules Entertainment.
 
-## Included
-- Homepage and brand experience
-- Schools directory with search/filter
-- All-grade coverage (K–12, college and university)
-- Video yearbook library (public/private access labels)
-- Digital archives
-- Pricing guide
-- How it works
-- About and contact pages
-- School coordinator portal concept
-- Admin control-room concept
-- Shared responsive CSS and JavaScript
+## Public site
+Responsive HTML/CSS/JavaScript pages cover elementary, middle school, high school, college, historical archives, private access, video yearbooks, pricing, partnerships and meeting requests.
 
-## Run locally
-Open `index.html` in a browser, or serve the folder with any static web server.
+## Design
+Raven-black, charcoal, antique-gold and ivory editorial system; photorealistic raven hero photography; shared navigation and footer; mobile navigation; reduced-motion support. No fabricated school partnerships or operational metrics are presented as real.
 
-## Important implementation notes
-This is a front-end starter/demo. Forms, authentication, uploads, school records, video playback, payments, and admin actions are illustrative UI only. They are not connected to Supabase or a video hosting provider.
+## Local preview
+Open index.html in a browser or run a static server from the repository root.
 
-Before publishing:
-1. Replace sample schools and sample yearbook entries with verified participating schools and authorized content.
-2. Connect Supabase Auth and database using the Supabase JS v2 client. Never expose a service-role key.
-3. Configure Row Level Security for school coordinators, administrators, and approved viewers.
-4. Use a dedicated video platform/CDN for transcoding, adaptive streaming, signed/private playback, and access control.
-5. Obtain school authorization and appropriate parent/guardian consent before collecting or publishing identifiable student footage.
-6. Add captions, accessibility review, retention rules, consent revocation, and video takedown workflows.
-7. Have legal counsel review FERPA, COPPA, Washington student privacy requirements, contracts, and data retention.
+## Existing administration
+The existing admin/index.html and its Universal Admin authentication integration have been preserved. It currently manages existing CrowRules tables such as school_profiles, cr_yearbook_projects, cr_yearbook_sections and cr_yearbook_submissions. It has not been silently migrated to the new yb_ schema. Review and reconcile these existing tables before extending the Control Center.
 
-## Suggested production roles
-- `super_admin`: CrowRules platform administration
-- `school_admin`: manages one participating school
-- `coordinator`: submits footage and reviews productions
-- `viewer`: authorized family/community viewer
+## Supabase
+The proposed isolated schema is in supabase/migrations/202611130001_yearbooks_core.sql. It uses yb_-prefixed objects and does not drop or alter existing CrowRules tables. Review the existing schema and policies, then test this migration in staging before applying it to the production project.
 
-## Suggested next technical steps
-- Create Supabase tables: `schools`, `school_members`, `academic_years`, `grade_collections`, `videos`, `video_access_grants`, `production_projects`, `consent_records`, `archive_items`, `inquiries`.
-- Add RLS policies scoped by school membership and video visibility.
-- Store video metadata in Supabase; store actual video files with a streaming provider.
-- Use signed playback URLs for private content and explicit public publication approval for public content.
+Configure the correct project URL and browser-safe anon key. Deploy Edge Functions for inquiry intake, access-code redemption, signed media URLs, notifications and audit writes. Configure private Storage buckets and test RLS with anonymous, family, school and administrator accounts. Never put a service-role key or other privileged secret in GitHub Pages JavaScript.
+
+## Current implementation boundary
+The meeting form intentionally does not transmit data yet. The private access portal is not activated. The existing admin is preserved, but new yearbook tables are not yet wired into its workspaces. These functions require backend configuration, schema reconciliation and server-side authorization.
+
+## Deployment
+GitHub Pages hosts the public static site. Privileged operations belong in Supabase Edge Functions or another trusted server-side environment. Add custom domain and HTTPS configuration as required.
+
+## Image credits
+The homepage raven hero uses a photograph by Mayukh Karmakar, sourced from Unsplash: https://unsplash.com/photos/a-black-raven-sits-on-a-mossy-branch-TaisLivrQYg. Confirm the source license and attribution requirements when replacing or rehosting image assets.
