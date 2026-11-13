@@ -23,7 +23,7 @@ The site uses the existing CrowRules Supabase project and the same Universal Cro
 - A shared viewing code is stored as a bcrypt hash in the private schema, never in browser JavaScript.
 - The authenticated member redeems the code for a specific published project.
 - Redemption is rate-limited by account.
-- Playback is issued by the authenticated `cr-yearbook-video-playback` Edge Function as a 15-minute signed URL.
+- Playback is issued by the authenticated `cr-yearbook-video-playback` Edge Function as a four-hour signed URL.
 - Revoking a grant prevents future playback URL issuance.
 
 The current shared code is intended as a temporary convenience, not strong identity verification. Schools should distribute it only to authorized viewers and rotate it if it is disclosed beyond the intended audience.
