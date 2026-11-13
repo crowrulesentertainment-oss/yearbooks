@@ -1,26 +1,26 @@
-# Supabase setup notes
+# Supabase implementation notes
 
-## Important: inspect before applying
-The CrowRules Supabase project already contains application tables and Row Level Security policies. The Yearbooks migration is isolated under the yb_ prefix, but it has not been applied by this repository change. Review the current schema, dependencies, grants and RLS policies in a staging project first. Do not reset the project or revoke existing policies as a shortcut.
+## Active project
+Project ref: `cevylpnoexugwgygvtgu`
 
-## Proposed Yearbooks schema
-Apply migrations in order only after review. The initial migration creates schools, school memberships, yearbooks, sections, media metadata, access groups, access memberships, hashed access-code records, inquiries, consent records and audit logs.
+## Universal CrowRules membership
+The existing `membership_sites` row for `yearbooks` is active and points to this GitHub Pages site. Existing global membership plans already include Yearbooks entitlements for CROW, CROWNER, CREATOR and FOUNDER. The frontend uses the shared Supabase Auth storage key used by Universal CrowRules Admin, and calls the existing `membership-status` Edge Function.
 
-## Existing admin compatibility
-The preserved admin/index.html currently queries school_profiles, cr_yearbook_projects, cr_yearbook_sections and cr_yearbook_submissions, and uses the existing CrowRules Universal Admin authentication helper. These are not automatically interchangeable with the new yb_ tables. Plan a deliberate migration or compatibility layer before changing the admin queries.
+## Video data
+The active migration creates:
+- `cr_yearbook_video_catalog`: public-safe metadata for published video yearbooks.
+- `cr_yearbook_video_assets`: private video storage object metadata, editable by CrowRules administrators.
+- `cr_yearbook_access_grants`: per-member, per-project access grants.
 
-## Required server-side functions
-- Inquiry intake: validate and rate-limit requests, create a reference number, store the inquiry and send an acknowledgment.
-- Invitation redemption: verify a hash server-side, enforce expiration and usage limits, then grant an authenticated membership.
-- Private media delivery: verify the user's access and return short-lived signed URLs.
-- Notifications: send staff alerts without exposing provider credentials.
-- Audit writes: record privileged changes from trusted server-side code.
+The migration also creates private passcode hash and rate-limit tables under the `private` schema, a redemption RPC, and a private `cr-yearbook-videos` Storage bucket.
 
-## Storage
-Use private buckets for yearbook scans, student photography, raw footage and private video assets. Only explicitly approved public assets belong in public buckets. Add object-level Storage policies and verify that signed URLs expire as expected.
+## Passcode and playback
+The initial shared viewing code is stored as a bcrypt hash in `private.cr_yearbook_access_codes`. Do not place the code in JavaScript, HTML, GitHub docs or client configuration. The `cr_yearbook_redeem_access` RPC requires an active/trialing Universal CrowRules membership, a published project, and enforces five attempts per 15 minutes per member account.
 
-## Security test matrix
-Test anonymous visitors, unrelated authenticated users, family members, teachers/editors, school administrators and CrowRules administrators. Verify public content, school-wide access, class-specific access, revocation, expired membership, withdrawn consent and private file access. Do not treat hiding a link or disabling a button as authorization.
+The `cr-yearbook-video-playback` Edge Function requires a valid user JWT, rechecks membership and a non-revoked grant, then returns 15-minute signed URLs for approved video assets.
 
-## Launch blockers
-Do not accept student media or personal information until school authorization, guardian consent where required, retention, removal, ownership, accessibility, privacy notices and applicable legal obligations have been reviewed.
+## Storage and admin
+The bucket is private. Only active CrowRules administrators may directly manage its objects. Viewer playback goes through the signed URL Edge Function. The existing Universal Admin session and `private.cr_universal_admin_check()` are reused.
+
+## Important production safeguards
+The shared passcode is a convenience layer, not a substitute for individual authorization, school approval or consent. Rotate it if it is exposed. Confirm consent, filming opt-outs, media rights, captions, retention and deletion procedures before uploading real student content.
