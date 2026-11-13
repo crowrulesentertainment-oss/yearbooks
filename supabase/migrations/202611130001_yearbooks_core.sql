@@ -52,3 +52,57 @@ create policy yb_audit_admin_read on public.yb_audit_logs for select to authenti
 -- No anonymous inquiry INSERT, private storage access, or raw passcode lookup is granted.
 -- Add rate-limited Edge Functions for inquiry intake, code redemption, signed URLs,
 -- notification delivery and privileged audit writes before production use.
+
+-- Class/family access is explicitly mapped to a yearbook. A school-wide membership
+-- is not automatically sufficient for family/viewer roles.
+create table if not exists public.yb_yearbook_access_groups(
+ id uuid primary key default gen_random_uuid(),
+ yearbook_id uuid not null references public.yb_yearbooks(id) on delete cascade,
+ access_group_id uuid not null references public.yb_access_groups(id) on delete cascade,
+ created_at timestamptz not null default now(),
+ unique(yearbook_id,access_group_id)
+);
+alter table public.yb_yearbook_access_groups enable row level security;
+create or replace function public.yb_can_view_yearbook(p_yearbook_id uuid)
+returns boolean language sql stable security definer set search_path=public
+as $$
+ select exists(
+  select 1 from public.yb_yearbooks y
+  where y.id=p_yearbook_id and (
+   exists(select 1 from public.yb_school_memberships sm
+    where sm.school_id=y.school_id and sm.user_id=auth.uid()
+    and sm.status='active' and sm.role in('school_admin','editor','teacher'))
+   or exists(select 1 from public.yb_yearbook_access_groups yg
+    join public.yb_access_groups ag on ag.id=yg.access_group_id
+    join public.yb_access_memberships am on am.access_group_id=ag.id
+    where yg.yearbook_id=y.id and am.user_id=auth.uid()
+    and am.revoked_at is null and (am.expires_at is null or am.expires_at>now())
+    and ag.status='active' and (ag.expires_at is null or ag.expires_at>now()))
+  )
+ );
+$$;
+drop policy if exists yb_yearbooks_school_read on public.yb_yearbooks;
+create policy yb_yearbooks_authorized_read on public.yb_yearbooks
+ for select to authenticated using(public.yb_can_view_yearbook(id));
+drop policy if exists yb_sections_member_read on public.yb_yearbook_sections;
+create policy yb_sections_authorized_read on public.yb_yearbook_sections
+ for select to authenticated using(public.yb_can_view_yearbook(yearbook_id));
+drop policy if exists yb_media_member_read on public.yb_yearbook_media;
+create policy yb_media_authorized_read on public.yb_yearbook_media
+ for select to authenticated using(public.yb_can_view_yearbook(yearbook_id));
+create policy yb_yearbook_access_groups_admin_manage on public.yb_yearbook_access_groups
+ for all to authenticated using(exists(
+  select 1 from public.yb_yearbooks y where y.id=yearbook_id
+  and public.yb_has_school_role(y.school_id,array['school_admin'])
+ )) with check(exists(
+  select 1 from public.yb_yearbooks y where y.id=yearbook_id
+  and public.yb_has_school_role(y.school_id,array['school_admin'])
+ ));
+create policy yb_access_membership_admin_manage on public.yb_access_memberships
+ for all to authenticated using(exists(
+  select 1 from public.yb_access_groups g where g.id=access_group_id
+  and public.yb_has_school_role(g.school_id,array['school_admin'])
+ )) with check(exists(
+  select 1 from public.yb_access_groups g where g.id=access_group_id
+  and public.yb_has_school_role(g.school_id,array['school_admin'])
+ ));
