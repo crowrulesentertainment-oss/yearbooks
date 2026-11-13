@@ -24,3 +24,6 @@ The meeting form intentionally does not transmit data yet. The private access po
 
 ## Deployment
 GitHub Pages hosts the public static site. Privileged operations belong in Supabase Edge Functions or another trusted server-side environment. Add custom domain and HTTPS configuration as required.
+
+## Image credits
+The homepage raven hero uses a photograph by Mayukh Karmakar, sourced from Unsplash: https://unsplash.com/photos/a-black-raven-sits-on-a-mossy-branch-TaisLivrQYg. Confirm the source license and attribution requirements when replacing or rehosting image assets.
