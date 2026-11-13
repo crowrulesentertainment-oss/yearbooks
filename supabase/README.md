@@ -24,3 +24,7 @@ The bucket is private. Only active CrowRules administrators may directly manage 
 
 ## Important production safeguards
 The shared passcode is a convenience layer, not a substitute for individual authorization, school approval or consent. Rotate it if it is exposed. Confirm consent, filming opt-outs, media rights, captions, retention and deletion procedures before uploading real student content.
+
+
+## Meeting request intake
+The public meeting form invokes `cr-yearbook-meeting-request` with no JWT requirement. The Edge Function validates adult contact fields, checks a honeypot, rate-limits by hashed IP, and inserts the inquiry using the server-side secret key. The browser receives only a reference code. The meeting request table is RLS-protected and admin-readable only.
