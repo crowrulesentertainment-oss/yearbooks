@@ -17,7 +17,7 @@ The migration also creates private passcode hash and rate-limit tables under the
 ## Passcode and playback
 The initial shared viewing code is stored as a bcrypt hash in `private.cr_yearbook_access_codes`. Do not place the code in JavaScript, HTML, GitHub docs or client configuration. The `cr_yearbook_redeem_access` RPC requires an active/trialing Universal CrowRules membership, a published project, and enforces five attempts per 15 minutes per member account.
 
-The `cr-yearbook-video-playback` Edge Function requires a valid user JWT, rechecks membership and a non-revoked grant, then returns 15-minute signed URLs for approved video assets.
+The `cr-yearbook-video-playback` Edge Function requires a valid user JWT, rechecks membership and a non-revoked grant, then returns four-hour signed URLs for approved video assets.
 
 ## Storage and admin
 The bucket is private. Only active CrowRules administrators may directly manage its objects. Viewer playback goes through the signed URL Edge Function. The existing Universal Admin session and `private.cr_universal_admin_check()` are reused.
