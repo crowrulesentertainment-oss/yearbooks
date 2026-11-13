@@ -62,7 +62,7 @@ $("catalogList").addEventListener("submit",async e=>{
    const source=document.createElement("source");source.src=asset.signed_url;video.appendChild(source);
    wrap.append(heading,video);target.appendChild(wrap);
   });
-  message("viewerMessage","Your access has been unlocked. Signed video links expire after 15 minutes; reload the collection to request a fresh link.");
+  message("viewerMessage","Your access has been unlocked. Signed video links expire after four hours; reload the collection to request a fresh link.");
   form.hidden=true;
  }catch(err){target.textContent=err.message||"Unable to unlock this video yearbook.";}
 });
