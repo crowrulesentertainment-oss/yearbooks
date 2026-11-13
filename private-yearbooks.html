@@ -59,7 +59,7 @@ $("catalogList").addEventListener("submit",async e=>{
    const wrap=document.createElement("div");wrap.className="feature";wrap.style.marginTop="12px";
    const heading=document.createElement("h3");heading.textContent=asset.title;
    const video=document.createElement("video");video.controls=true;video.playsInline=true;video.preload="metadata";video.style.width="100%";video.style.borderRadius="10px";video.style.background="#000";
-   const source=document.createElement("source");source.src=asset.signed_url;source.type="video/mp4";video.appendChild(source);
+   const source=document.createElement("source");source.src=asset.signed_url;video.appendChild(source);
    wrap.append(heading,video);target.appendChild(wrap);
   });
   message("viewerMessage","Your access has been unlocked. Signed video links expire after 15 minutes; reload the collection to request a fresh link.");
