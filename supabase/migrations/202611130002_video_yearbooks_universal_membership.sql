@@ -100,7 +100,7 @@ revoke all on private.cr_yearbook_access_codes from public,anon,authenticated;
 revoke all on private.cr_yearbook_access_attempts from public,anon,authenticated;
 
 insert into private.cr_yearbook_access_codes(code_key,code_hash,is_active)
-values ('default',extensions.crypt('crent27',extensions.gen_salt('bf',12)),true)
+values ('default','$2a$12$0vctnKkKTxFs3me.zBw5s.QKfLNdZe4R7y4B85cryptXmVm9dNSr2',true)
 on conflict (code_key) do update
 set code_hash=excluded.code_hash,is_active=true,updated_at=now();
 
