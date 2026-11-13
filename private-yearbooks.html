@@ -1,1 +1,72 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Private Yearbook Access | CrowRules Yearbooks</title><link rel="stylesheet" href="assets/css/styles.css"></head><body><header class="site-header" data-header></header><main><section class="page-hero"><div class="container"><div class="eyebrow">Authorized school communities</div><h1 class="page-title">Private Yearbook Access</h1><p>Access private school and class collections through an authorized account or invitation.</p></div></section><section class="section"><div class="container grid grid-2"><div><h2>Your memories, protected.</h2><p class="muted">Private collections are intended for approved school communities and authorized family members. Access is granted by the participating school and managed through secure server-side permissions.</p><div class="notice">The private access backend is not activated in this initial repository commit. Do not enter real passwords or access codes until authentication and authorization are deployed.</div></div><div class="portal-panel"><h3>Sign-in portal</h3><p class="muted">Supabase Auth and protected invitation validation will power this experience after backend setup.</p><button class="btn btn-primary" type="button" disabled>Access Portal — Coming Soon</button></div></div></section></main><footer class="footer" data-footer></footer><script src="assets/js/main.js"></script></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="description" content="Private video yearbook viewing for authorized CrowRules members."><title>Private Video Yearbook Viewing | CrowRules</title><link rel="stylesheet" href="assets/css/styles.css"></head><body><header class="site-header" data-header></header><main><section class="page-hero"><div class="container"><div class="eyebrow">CrowRules Universal Membership</div><h1 class="page-title">Private Video Yearbook Viewing</h1><p>Sign in with your existing CrowRules account, then enter the viewing passcode supplied by your school or CrowRules.</p></div></section><section class="section"><div class="container grid grid-2"><div><h2>Your school memories. Protected.</h2><p class="muted">Private video yearbooks are available to active CrowRules members after the correct viewing code has been redeemed for a published collection.</p><div class="notice">Video files are stored in a private Supabase Storage bucket. Playback uses short-lived signed URLs. The viewing code is verified server-side and is never included in this page’s source code.</div><p class="small">Need a CrowRules account? <a href="https://crowrulesentertainment-oss.github.io/members/">Visit CrowRules Membership</a>.</p><p class="small">For school access or consent questions, contact crowrulesentertainment@gmail.com.</p></div><div class="portal-panel"><div id="memberSignedOut"><h3>Universal CrowRules Sign In</h3><p class="muted">Use the same account you already use across CrowRules Entertainment.</p><form id="memberLogin"><div class="form-group"><label for="memberEmail">Email</label><input id="memberEmail" class="form-control" type="email" autocomplete="username" required></div><div class="form-group"><label for="memberPassword">Password</label><input id="memberPassword" class="form-control" type="password" autocomplete="current-password" required></div><button class="btn btn-primary" type="submit">Sign In</button></form><p class="small" id="loginMessage" aria-live="polite"></p></div><div id="memberSignedIn" hidden><div class="tag">Universal membership verified</div><h3 id="memberName">Welcome</h3><p class="muted" id="membershipPlan"></p><button class="btn btn-outline" id="memberSignOut" type="button">Sign Out of CrowRules</button><div class="divider"></div><h3>Available Video Yearbooks</h3><p class="small muted">Choose a published collection and enter its viewing code.</p><div id="catalogList"><p class="small muted">Loading published video yearbooks…</p></div></div><p class="small" id="viewerMessage" aria-live="polite"></p></div></div></section></main><footer class="footer" data-footer></footer><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script><script src="assets/js/main.js"></script><script>
+(function(){
+const URL="https://cevylpnoexugwgygvtgu.supabase.co";
+const KEY="sb_publishable_AdfM5y6RqvF3tbvEVzDZSg_JuGTQLD-";
+const STORAGE_KEY="sb-cevylpnoexugwgygvtgu-auth-token";
+const client=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage,storageKey:STORAGE_KEY}});
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function message(id,text){$(id).textContent=text||"";}
+function signedInUI(on){$("memberSignedOut").hidden=on;$("memberSignedIn").hidden=!on;}
+async function loadCatalog(){
+ const {data,error}=await client.from("cr_yearbook_video_catalog").select("project_id,title,description,academic_year,audience,cover_image_url").eq("publication_status","published").order("published_at",{ascending:false});
+ if(error)throw error;
+ const list=$("catalogList");
+ if(!data?.length){list.innerHTML='<p class="small muted">No video yearbooks are currently published. Check back when your school collection is released.</p>';return;}
+ list.innerHTML=data.map(p=>'<article class="feature" style="margin:12px 0"><span class="tag">'+esc(p.audience.replaceAll("_"," "))+'</span><h3>'+esc(p.title)+'</h3><p class="small muted">'+esc(p.academic_year||"")+' · '+esc(p.description||"")+'</p><form data-unlock="'+esc(p.project_id)+'"><div class="form-group"><label>Viewing passcode</label><input class="form-control" type="password" name="code" autocomplete="off" required placeholder="Enter viewing passcode"></div><button class="btn btn-primary" type="submit">Unlock & Watch</button></form><div data-player="'+esc(p.project_id)+'"></div></article>').join("");
+}
+async function checkMembership(){
+ const {data,error}=await client.functions.invoke("membership-status");
+ if(error)throw error;
+ if(!data?.ok)throw new Error("Unable to verify your CrowRules membership.");
+ const m=data.membership;
+ if(!m||!["active","trialing"].includes(String(m.status||"").toLowerCase()))throw new Error("An active CrowRules membership is required to view private video yearbooks.");
+ const site=(data.sites||[]).find(x=>x.site_key==="yearbooks"&&x.is_active);
+ const entitlement=(data.entitlements||[]).find(x=>x.site_key==="yearbooks");
+ if(!site||!entitlement)throw new Error("Yearbooks is not enabled for this membership yet. Please contact CrowRules support.");
+ $("memberName").textContent="Welcome to CrowRules";
+ $("membershipPlan").textContent=(m.plan_name||m.plan_key||"CrowRules Member")+" · Active Universal Membership";
+}
+async function enter(){
+ const {data:{user},error}=await client.auth.getUser();
+ if(error)throw error;
+ if(!user){signedInUI(false);return;}
+ await checkMembership();
+ signedInUI(true);
+ await loadCatalog();
+}
+$("memberLogin").addEventListener("submit",async e=>{
+ e.preventDefault();message("loginMessage","Signing in…");
+ const {error}=await client.auth.signInWithPassword({email:$("memberEmail").value.trim(),password:$("memberPassword").value});
+ if(error){message("loginMessage",error.message);return;}
+ try{await enter();message("loginMessage","");}catch(err){await client.auth.signOut({scope:"local"});signedInUI(false);message("loginMessage",err.message);}
+});
+$("memberSignOut").addEventListener("click",async()=>{await client.auth.signOut({scope:"local"});signedInUI(false);message("viewerMessage","You have signed out of CrowRules.");});
+$("catalogList").addEventListener("submit",async e=>{
+ const form=e.target.closest("form[data-unlock]");if(!form)return;e.preventDefault();
+ const projectId=form.dataset.unlock,code=form.elements.code.value;
+ const target=document.querySelector('[data-player="'+projectId+'"]');
+ target.textContent="Verifying your viewing code…";message("viewerMessage","");
+ try{
+  const {data:ok,error}=await client.rpc("cr_yearbook_redeem_access",{p_code:code,p_project_id:projectId});
+  if(error)throw error;if(ok!==true)throw new Error("The viewing code was not accepted. Check the code or try again later.");
+  target.textContent="Access verified. Preparing your video…";
+  const {data:play,error:playError}=await client.functions.invoke("cr-yearbook-video-playback",{body:{project_id:projectId}});
+  if(error||playError)throw (error||playError);
+  if(!play?.ok||!play.assets?.length)throw new Error(play?.error||"The video is not available yet.");
+  target.innerHTML="";
+  play.assets.forEach(asset=>{
+   const wrap=document.createElement("div");wrap.className="feature";wrap.style.marginTop="12px";
+   const heading=document.createElement("h3");heading.textContent=asset.title;
+   const video=document.createElement("video");video.controls=true;video.playsInline=true;video.preload="metadata";video.style.width="100%";video.style.borderRadius="10px";video.style.background="#000";
+   const source=document.createElement("source");source.src=asset.signed_url;video.appendChild(source);
+   wrap.append(heading,video);target.appendChild(wrap);
+  });
+  message("viewerMessage","Your access has been unlocked. Signed video links expire after 15 minutes; reload the collection to request a fresh link.");
+  form.hidden=true;
+ }catch(err){target.textContent=err.message||"Unable to unlock this video yearbook.";}
+});
+client.auth.onAuthStateChange((event)=>{if(event==="SIGNED_OUT")signedInUI(false);});
+enter().catch(err=>{signedInUI(false);message("loginMessage",err.message||"Unable to verify membership.");});
+})();
+</script></body></html>
